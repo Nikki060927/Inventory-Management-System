@@ -1,72 +1,63 @@
 @echo off
-TITLE Smart Stationery Inventory Management System Launcher
+TITLE Smart Stationery Inventory Management System - Academic Launcher
 COLOR 0B
 CLS
 
 echo ======================================================================
 echo          SMART STATIONERY INVENTORY MANAGEMENT SYSTEM
-echo       Academic Project Launcher (Java 21 + JDBC + React)
+echo     Full-Stack Academic Project Runner (SOP-COLLEGE-FSD-2026)
+echo     Team: Nikhila V (44731059) & Zaid Basha (44731049)
 echo ======================================================================
 echo.
 
-:: 1. Verify Java 21+ is available
-echo [1/4] Checking Java environment...
-java -version >nul 2>&1
+:: 1. Verify JDK 17+ is installed
+echo [1/3] Verifying Java Development Kit (JDK 17+)...
+javac -version >nul 2>&1
 IF %ERRORLEVEL% NEQ 0 (
     COLOR 0C
-    echo [ERROR] Java is not installed or not added to PATH!
-    echo Please install JDK 21+ and add it to your System PATH.
+    echo [ERROR] JDK compiler 'javac' is not found or not in PATH!
+    echo Please install JDK 17 or higher and configure your PATH environment variable.
     pause
     exit /b 1
 )
-echo [OK] Java runtime found.
+echo [OK] JDK compiler verified.
 echo.
 
-:: 2. Verify Node.js is available
-echo [2/4] Checking Node.js environment (for React build/dev server)...
-node -v >nul 2>&1
-IF %ERRORLEVEL% NEQ 0 (
-    COLOR 0C
-    echo [ERROR] Node.js is not installed or not added to PATH!
-    echo Node.js is required as the development build tool for the React UI.
-    pause
-    exit /b 1
-)
-echo [OK] Node.js and npm found.
-echo.
-
-:: 3. Compile and Start Backend
-echo [3/4] Compiling Java 21 Backend...
+:: 2. Compile all Java backend classes into backend/bin/
+echo [2/3] Compiling Java backend classes into backend/bin/ ...
 cd backend
-IF NOT EXIST "out" mkdir out
-javac -cp "lib/mysql-connector-j.jar;src" -d "out" src/model/*.java src/util/*.java src/dao/*.java src/service/*.java src/server/*.java src/Main.java
+IF NOT EXIST "bin" mkdir bin
+javac -cp "lib/mysql-connector-j.jar;src" -d "bin" src/model/*.java src/util/*.java src/dao/*.java src/service/*.java src/server/*.java src/Main.java
 IF %ERRORLEVEL% NEQ 0 (
     COLOR 0C
-    echo [ERROR] Java compilation failed! Check error messages above.
+    echo [ERROR] Compilation failed! Check error logs above.
     pause
     exit /b 1
 )
-echo [OK] Backend compiled successfully.
-echo Starting Java REST Server on http://localhost:8080/api ...
-start "Smart Stationery - Java Backend (Port 8080)" cmd /k "java -cp out;lib/mysql-connector-j.jar Main"
+echo [OK] Compilation successful. All classes generated in backend/bin/.
 cd ..
 echo.
 
-:: 4. Start React Frontend
-echo [4/4] Starting React Frontend Dev Server on http://127.0.0.1:5173/ ...
-start "Smart Stationery - React UI (Port 5173)" cmd /k "cd frontend && npm run dev -- --host 127.0.0.1 --port 5173"
+:: 3. Launch Java HttpServer on port 8080
+echo [3/3] Starting Java HttpServer & REST API on Port 8080...
+start "Smart Stationery - Server & Application (:8080)" cmd /k "cd backend && java -cp bin;lib/mysql-connector-j.jar Main"
 
-:: Wait a brief moment for dev servers to initialize, then launch default browser
+:: Brief wait for server socket binding
 timeout /t 3 >nul
-start http://127.0.0.1:5173/
 
-echo ======================================================================
-echo  PROJECT IS NOW RUNNING!
-echo  ------------------------------------------------------------------
-echo  * React Frontend UI:  http://127.0.0.1:5173/
-echo  * Java REST Backend:  http://localhost:8080/api
+:: 4. Open Web Application and 20-Slide Presentation
+echo [OK] Launching Application and 20-Slide Presentation...
+start http://localhost:8080/index.html
+start "" "%~dp0presentation\presentation.html"
+
 echo.
-echo  Keep the two opened command prompt windows running while using the app.
+echo ======================================================================
+echo  SYSTEM IS LIVE AND RUNNING!
+echo  ------------------------------------------------------------------
+echo  * Web Application:     http://localhost:8080/index.html
+echo  * REST API Base URL:   http://localhost:8080/api
+echo  * 20-Slide Web Deck:   presentation/presentation.html
+echo  * Academic Runbook:    docs/Student_FullStack_Project_Runbook.xlsx
 echo ======================================================================
 echo.
 pause
