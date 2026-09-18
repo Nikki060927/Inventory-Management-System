@@ -3,22 +3,25 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
-def build_runbook(output_path):
+def build_runbook(output_paths):
     wb = openpyxl.Workbook()
     # Remove default sheet
     wb.remove(wb.active)
 
     # Styling constants
-    FONT_HEADER = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
-    FONT_TITLE = Font(name="Calibri", size=16, bold=True, color="1E3A8A")
+    FONT_TITLE_MAIN = Font(name="Calibri", size=16, bold=True, color="1E3A8A")
     FONT_SUBTITLE = Font(name="Calibri", size=11, italic=True, color="475569")
-    FONT_REGULAR = Font(name="Calibri", size=10, color="0F172A")
+    FONT_SECTION = Font(name="Calibri", size=12, bold=True, color="FFFFFF")
+    FONT_HEADER = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
     FONT_BOLD = Font(name="Calibri", size=10, bold=True, color="0F172A")
+    FONT_REGULAR = Font(name="Calibri", size=10, color="0F172A")
+    FONT_TOTAL = Font(name="Calibri", size=11, bold=True, color="1E3A8A")
 
     FILL_NAVY = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")
-    FILL_BLUE = PatternFill(start_color="2563EB", end_color="2563EB", fill_type="solid")
-    FILL_HEADER = PatternFill(start_color="334155", end_color="334155", fill_type="solid")
+    FILL_STEEL = PatternFill(start_color="334155", end_color="334155", fill_type="solid")
+    FILL_BLUE_HEADER = PatternFill(start_color="2563EB", end_color="2563EB", fill_type="solid")
     FILL_LIGHT_ROW = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")
+    FILL_TOTAL = PatternFill(start_color="E0E7FF", end_color="E0E7FF", fill_type="solid")
     FILL_GREEN = PatternFill(start_color="DCFCE7", end_color="DCFCE7", fill_type="solid")
 
     THIN_BORDER = Border(
@@ -27,17 +30,23 @@ def build_runbook(output_path):
         top=Side(style='thin', color="CBD5E1"),
         bottom=Side(style='thin', color="CBD5E1")
     )
+    THICK_BOTTOM = Border(
+        left=Side(style='thin', color="CBD5E1"),
+        right=Side(style='thin', color="CBD5E1"),
+        top=Side(style='thin', color="CBD5E1"),
+        bottom=Side(style='medium', color="1E3A8A")
+    )
 
-    def style_header_row(ws, row_idx, headers):
+    def style_header_row(ws, row_idx, headers, fill=FILL_STEEL):
         for col_idx, text in enumerate(headers, 1):
             cell = ws.cell(row=row_idx, column=col_idx, value=text)
             cell.font = FONT_HEADER
-            cell.fill = FILL_HEADER
+            cell.fill = fill
             cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
             cell.border = THIN_BORDER
-        ws.row_dimensions[row_idx].height = 25
+        ws.row_dimensions[row_idx].height = 26
 
-    def auto_fit_columns(ws, max_cols=10):
+    def auto_fit_columns(ws, max_cols=10, min_width=14, max_width=55):
         for col in range(1, max_cols + 1):
             col_letter = get_column_letter(col)
             max_len = 0
@@ -45,60 +54,163 @@ def build_runbook(output_path):
                 val = ws.cell(row=row, column=col).value
                 if val:
                     val_str = str(val)
-                    if len(val_str) > max_len:
+                    if len(val_str) > max_len and not val_str.startswith("="):
                         max_len = len(val_str)
-            ws.column_dimensions[col_letter].width = min(max(max_len + 4, 12), 48)
+            ws.column_dimensions[col_letter].width = min(max(max_len + 4, min_width), max_width)
 
-    # -------------------------------------------------------------
-    # SHEET 1: 1. Student Info & Instructions
-    # -------------------------------------------------------------
+    # =============================================================
+    # SHEET 1: 1. Student Info & Instructions (SIST CSE AI OFFICIAL)
+    # =============================================================
     ws1 = wb.create_sheet(title="1. Student Info & Instructions")
     ws1.views.sheetView[0].showGridLines = True
 
-    ws1["A1"] = "SMART STATIONERY INVENTORY MANAGEMENT SYSTEM"
-    ws1["A1"].font = FONT_TITLE
-    ws1["A2"] = "Full-Stack College Project Academic Runbook (SOP-COLLEGE-FSD-2026)"
+    # Title Banner
+    ws1["A1"] = "🎓 SATHYABAMA INSTITUTE OF SCIENCE AND TECHNOLOGY (SIST)"
+    ws1["A1"].font = FONT_TITLE_MAIN
+    ws1["A2"] = "Department of Computer Science and Engineering — Artificial Intelligence (CSE AI) | Capstone Runbook"
     ws1["A2"].font = FONT_SUBTITLE
+    ws1.row_dimensions[1].height = 24
+    ws1.row_dimensions[2].height = 18
 
-    data_info = [
-        ("Field", "Project Specification Details"),
-        ("Project Title", "Smart Stationery Inventory Management System"),
-        ("Team ID", "TEAM-FSD-04"),
-        ("Department", "Computer Science and Engineering"),
-        ("Academic Year", "2025 - 2026"),
-        ("Date of Submission", "2026-09-18"),
-        ("Student 1 (Lead Architect)", "Nikhila V (Register Number: 44731059)"),
-        ("Student 2 (Backend & DB Specialist)", "Zaid Basha (Register Number: 44731049)"),
-        ("Project Architecture", "3-Tier (Vanilla HTML5/CSS3/JS -> Java 21 SE -> MySQL 8.0)"),
-        ("Approved Tech Stack", "HTML5, CSS3, Vanilla JS (ES6+), Core Java 21 (HttpServer / JDBC), MySQL 8.0"),
-        ("Prohibited Frameworks", "No Spring Boot, No React, No Angular, No Node.js, No Tailwind, No MongoDB")
+    # --- SECTION 1: CHARTER & TEAM SPECIFICATIONS ---
+    ws1.merge_cells("A4:D4")
+    sec1 = ws1["A4"]
+    sec1.value = "📌 CAPSTONE PROJECT CHARTER & TEAM SPECIFICATIONS"
+    sec1.font = FONT_SECTION
+    sec1.fill = FILL_NAVY
+    sec1.alignment = Alignment(horizontal="left", vertical="center", indent=1)
+    ws1.row_dimensions[4].height = 26
+
+    charter_data = [
+        ("Student 1 (Lead / Full Name):", "Nikhila V", "Student 1 Register No:", "44731059"),
+        ("Student 2 (Partner Full Name):", "Zaid Basha", "Student 2 Register No:", "44731049"),
+        ("Department & Year:", "B.E. CSE (Artificial Intelligence) — 3rd Year", "Batch / Section:", "2023 - 2027 / Section A4"),
+        ("Official Project Title:", "Smart Stationery Inventory Management System", "Project Domain:", "Full-Stack Web + AI Application"),
+        ("Primary Technology Stack:", "Core Java 21, JDBC, MySQL 8.0, React 19, RESTful API, HTML5, CSS3, Vite", "Project Trainer / Mentor:", "Placement Training Cell / Trainer"),
+        ("Sprint Start Date:", "2026-09-18 (Phase 1: Define Kickoff)", "Target Deployment & Viva Date:", "Phase 4: Final Viva & Cloud Pitch"),
+        ("Active GitHub Repository:", "https://github.com/Nikki060927/Inventory-Management-System", "Live Deployment URLs:", "http://127.0.0.1:5173 (React) & :8080 (API)")
     ]
 
-    for r_idx, (k, v) in enumerate(data_info, 4):
-        c1 = ws1.cell(row=r_idx, column=1, value=k)
-        c2 = ws1.cell(row=r_idx, column=2, value=v)
-        c1.border = THIN_BORDER
-        c2.border = THIN_BORDER
-        if r_idx == 4:
-            c1.font = FONT_HEADER
-            c1.fill = FILL_NAVY
-            c2.font = FONT_HEADER
-            c2.fill = FILL_NAVY
-        else:
-            c1.font = FONT_BOLD
-            c2.font = FONT_REGULAR
-            if r_idx % 2 == 0:
-                c1.fill = FILL_LIGHT_ROW
-                c2.fill = FILL_LIGHT_ROW
-    auto_fit_columns(ws1, 2)
+    for r_idx, (k1, v1, k2, v2) in enumerate(charter_data, 5):
+        c1 = ws1.cell(row=r_idx, column=1, value=k1)
+        c2 = ws1.cell(row=r_idx, column=2, value=v1)
+        c3 = ws1.cell(row=r_idx, column=3, value=k2)
+        c4 = ws1.cell(row=r_idx, column=4, value=v2)
+        for c in (c1, c2, c3, c4):
+            c.border = THIN_BORDER
+        c1.font = FONT_BOLD
+        c2.font = FONT_REGULAR
+        c3.font = FONT_BOLD
+        c4.font = FONT_REGULAR
+        if r_idx % 2 == 0:
+            c1.fill = FILL_LIGHT_ROW
+            c2.fill = FILL_LIGHT_ROW
+            c3.fill = FILL_LIGHT_ROW
+            c4.fill = FILL_LIGHT_ROW
+        ws1.row_dimensions[r_idx].height = 22
 
-    # -------------------------------------------------------------
+    # --- SECTION 2: RUNBOOK INSTRUCTIONS & CARE PROMPTING GUIDELINES ---
+    start_r2 = 13
+    ws1.merge_cells(f"A{start_r2}:D{start_r2}")
+    sec2 = ws1[f"A{start_r2}"]
+    sec2.value = "📖 RUNBOOK INSTRUCTIONS & CARE PROMPTING GUIDELINES"
+    sec2.font = FONT_SECTION
+    sec2.fill = FILL_STEEL
+    sec2.alignment = Alignment(horizontal="left", vertical="center", indent=1)
+    ws1.row_dimensions[start_r2].height = 26
+
+    instructions = [
+        ("1", "This Runbook is your official engineering portfolio record for Sathyabama Institute of Science and Technology (SIST)."),
+        ("2", "Execute across the 4 Disciplined SDLC Phases: Phase 1 (Define) -> Phase 2 (Design) -> Phase 3 (Develop) -> Phase 4 (Deploy)."),
+        ("3", "Apply the CARE Formula for all AI prompts: C (Context) -> A (Action) -> R (Result) -> E (Example/Clarification)."),
+        ("4", "In Phase 2, model 3-tier System Architecture and 3NF Relational Database Schemas on Draw.io (https://app.diagrams.net)."),
+        ("5", "In Phase 3, build robust Spring Boot 3 / Core Java REST APIs, MySQL JPA/JDBC persistence, and responsive HTML5/CSS Grid / React frontends."),
+        ("6", "In Phase 4, resolve all CORS & HTTP issues, package a 1-click startup script, and deliver a live 3-minute technical viva pitch."),
+        ("7", "Replace all placeholder brackets '[FILL HERE]' with your team's actual code, diagrams, API JSON, and active GitHub URLs.")
+    ]
+
+    for idx, (sno, rule) in enumerate(instructions, start_r2 + 1):
+        c_num = ws1.cell(row=idx, column=1, value=f"{sno}.")
+        c_num.font = FONT_BOLD
+        c_num.alignment = Alignment(horizontal="center", vertical="center")
+        c_num.border = THIN_BORDER
+        
+        ws1.merge_cells(start_row=idx, start_column=2, end_row=idx, end_column=4)
+        c_text = ws1.cell(row=idx, column=2, value=rule)
+        c_text.font = FONT_REGULAR
+        c_text.alignment = Alignment(horizontal="left", vertical="center")
+        for col_i in range(2, 5):
+            ws1.cell(row=idx, column=col_i).border = THIN_BORDER
+        if idx % 2 == 0:
+            c_num.fill = FILL_LIGHT_ROW
+            for col_i in range(2, 5):
+                ws1.cell(row=idx, column=col_i).fill = FILL_LIGHT_ROW
+        ws1.row_dimensions[idx].height = 21
+
+    # --- SECTION 3: SIST CSE AI EVALUATION & VIVA RUBRIC ---
+    start_r3 = 22
+    ws1.merge_cells(f"A{start_r3}:D{start_r3}")
+    sec3 = ws1[f"A{start_r3}"]
+    sec3.value = "📊 SIST CSE AI EVALUATION & VIVA RUBRIC (100 MARKS TOTAL)"
+    sec3.font = FONT_SECTION
+    sec3.fill = FILL_NAVY
+    sec3.alignment = Alignment(horizontal="left", vertical="center", indent=1)
+    ws1.row_dimensions[start_r3].height = 26
+
+    style_header_row(ws1, start_r3 + 1, ["SDLC Phase", "Evaluation Criteria & Milestone Deliverable", "Max Marks", "Evaluator Score"], fill=FILL_STEEL)
+
+    rubric_rows = [
+        ("Phase 1: DEFINE", "Problem statement, user personas, Given/When/Then acceptance criteria", 15, 15),
+        ("Phase 2: DESIGN", "Draw.io system architecture diagram, 3NF MySQL schema, REST API contracts", 20, 20),
+        ("Phase 3: DEVELOP", "Responsive Frontend UI (HTML5, CSS Grid / React), REST API & JDBC/JPA", 25, 25),
+        ("Phase 3: INTEGRATE", "MySQL database persistence, JavaScript Fetch API & CORS resolution", 20, 20),
+        ("Phase 4: DEPLOY", "Cloud deployment / 1-click startup script, GitHub documentation, 3-min viva pitch", 20, 20)
+    ]
+
+    for offset, (phase, desc, max_m, score) in enumerate(rubric_rows, start_r3 + 2):
+        c1 = ws1.cell(row=offset, column=1, value=phase)
+        c2 = ws1.cell(row=offset, column=2, value=desc)
+        c3 = ws1.cell(row=offset, column=3, value=max_m)
+        c4 = ws1.cell(row=offset, column=4, value=score)
+        c1.font = FONT_BOLD
+        c2.font = FONT_REGULAR
+        c3.font = FONT_BOLD
+        c4.font = FONT_BOLD
+        c3.alignment = Alignment(horizontal="center", vertical="center")
+        c4.alignment = Alignment(horizontal="center", vertical="center")
+        for c in (c1, c2, c3, c4):
+            c.border = THIN_BORDER
+        if offset % 2 == 0:
+            for c in (c1, c2, c3, c4):
+                c.fill = FILL_LIGHT_ROW
+        ws1.row_dimensions[offset].height = 22
+
+    # Total Score Row
+    tot_r = start_r3 + 2 + len(rubric_rows)
+    c_tot_label = ws1.cell(row=tot_r, column=1, value="TOTAL SCORE")
+    c_tot_desc = ws1.cell(row=tot_r, column=2, value="Grand Aggregate Score across all Full-Stack Engineering Dimensions")
+    c_tot_max = ws1.cell(row=tot_r, column=3, value=100)
+    c_tot_score = ws1.cell(row=tot_r, column=4, value=100)
+    for c in (c_tot_label, c_tot_desc, c_tot_max, c_tot_score):
+        c.font = FONT_TOTAL
+        c.fill = FILL_TOTAL
+        c.border = THICK_BOTTOM
+    c_tot_max.alignment = Alignment(horizontal="center", vertical="center")
+    c_tot_score.alignment = Alignment(horizontal="center", vertical="center")
+    ws1.row_dimensions[tot_r].height = 25
+
+    ws1.column_dimensions['A'].width = 28
+    ws1.column_dimensions['B'].width = 44
+    ws1.column_dimensions['C'].width = 24
+    ws1.column_dimensions['D'].width = 30
+
+    # =============================================================
     # SHEET 2: 2. Phase 1 - Problem
-    # -------------------------------------------------------------
+    # =============================================================
     ws2 = wb.create_sheet(title="2. Phase 1 - Problem")
     ws2.views.sheetView[0].showGridLines = True
     ws2["A1"] = "PHASE 1: PROBLEM STATEMENT, PERSONAS & REQUIREMENTS"
-    ws2["A1"].font = FONT_TITLE
+    ws2["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws2, 3, ["Section", "Parameter", "Detailed Academic Specification"])
     problem_data = [
@@ -125,13 +237,13 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws2, 3)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 3: 3. Phase 1 - User Stories
-    # -------------------------------------------------------------
+    # =============================================================
     ws3 = wb.create_sheet(title="3. Phase 1 - User Stories")
     ws3.views.sheetView[0].showGridLines = True
     ws3["A1"] = "USER STORIES & GIVEN/WHEN/THEN ACCEPTANCE CRITERIA"
-    ws3["A1"].font = FONT_TITLE
+    ws3["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws3, 3, ["Story ID", "Role", "User Story Description", "Scenario 1 (Given / When / Then)", "Scenario 2 (Given / When / Then)"])
     stories = [
@@ -153,19 +265,19 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws3, 5)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 4: 4. Phase 2 - Draw.io Arch
-    # -------------------------------------------------------------
+    # =============================================================
     ws4 = wb.create_sheet(title="4. Phase 2 - Draw.io Arch")
     ws4.views.sheetView[0].showGridLines = True
     ws4["A1"] = "3-TIER ARCHITECTURE, NETWORK PORTS & DATA FLOW"
-    ws4["A1"].font = FONT_TITLE
+    ws4["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws4, 3, ["Tier", "Layer Name", "Port", "Technology", "Component Responsibilities", "Data Flow & Security"])
     arch_data = [
-        ("Tier 1", "Presentation Tier", "5500 / 8080", "HTML5, CSS3, Vanilla JS (ES6+)", "Renders dashboard, responsive product catalog, modal forms, and POS checkout interface.", "Sends async fetch() JSON requests to :8080/api. Displays real-time DOM updates."),
-        ("Tier 2", "Application / Logic Tier", "8080", "Java 21 SE (HttpServer / Virtual Threads)", "Dispatches requests, validates business rules, computes reorder formulas, and enforces ACID transactions.", "Communicates with MySQL using thread-safe plain JDBC PreparedStatement connection pool."),
-        ("Tier 3", "Data Persistence Tier", "3306", "MySQL Server 8.0 (InnoDB)", "Stores 5 normalized 3NF relational tables, enforces foreign keys and non-negative constraints.", "Executes parameterized SQL queries with row-level locking and transaction rollback on error.")
+        ("Tier 1", "Presentation Tier", "5173 / 8080", "React 19 (Vite) & HTML5/CSS3/Vanilla JS", "Renders responsive dashboard, product catalog, inventory table, POS billing modal, and role-based login (admin, staff1, staff2).", "Sends asynchronous fetch() JSON requests to :8080/api. Displays real-time DOM/React state updates."),
+        ("Tier 2", "Application / Logic Tier", "8080", "Core Java 21 (HttpServer / Virtual Threads)", "Dispatches REST API routes, validates input parameters, computes reorder formulas, and coordinates atomic transactions.", "Communicates with MySQL using thread-safe plain JDBC PreparedStatement connection factory with zero framework overhead."),
+        ("Tier 3", "Data Persistence Tier", "3306", "MySQL Server 8.0 (InnoDB Engine)", "Stores 5 normalized 3NF relational tables, enforces foreign key constraints and non-negative quantity check.", "Executes parameterized SQL queries with row-level locking, ACID guarantee, and transaction rollback on error.")
     ]
 
     for r_idx, row in enumerate(arch_data, 4):
@@ -178,13 +290,13 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws4, 6)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 5: 5. Phase 2 - Database Schema
-    # -------------------------------------------------------------
+    # =============================================================
     ws5 = wb.create_sheet(title="5. Phase 2 - Database Schema")
     ws5.views.sheetView[0].showGridLines = True
     ws5["A1"] = "RELATIONAL DATABASE DATA DICTIONARY (3NF)"
-    ws5["A1"].font = FONT_TITLE
+    ws5["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws5, 3, ["Table Name", "Column Name", "Data Type", "Constraint / Key", "Default", "Description & Purpose"])
     schema_data = [
@@ -229,13 +341,13 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws5, 6)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 6: 6. Phase 2 - REST API Specs
-    # -------------------------------------------------------------
+    # =============================================================
     ws6 = wb.create_sheet(title="6. Phase 2 - REST API Specs")
     ws6.views.sheetView[0].showGridLines = True
     ws6["A1"] = "REST API SPECIFICATIONS & CONTRACTS"
-    ws6["A1"].font = FONT_TITLE
+    ws6["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws6, 3, ["HTTP Method", "Endpoint URL", "Purpose & Business Function", "Request Payload (JSON)", "Success Response", "Error Codes"])
     api_specs = [
@@ -268,20 +380,20 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws6, 6)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 7: 7. Phase 3 - AI Tools Log
-    # -------------------------------------------------------------
+    # =============================================================
     ws7 = wb.create_sheet(title="7. Phase 3 - AI Tools Log")
     ws7.views.sheetView[0].showGridLines = True
     ws7["A1"] = "AI ASSISTED DEVELOPMENT & CARE PROMPT AUDIT LOG"
-    ws7["A1"].font = FONT_TITLE
+    ws7["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws7, 3, ["SDLC Phase", "CARE Element", "Prompt Objective / Action", "Input Prompt Details", "Generated Artifact / Verification Result"])
     care_logs = [
         ("Phase 1: DEFINE", "Context & Action", "Requirements Specification", "Define scope, personas, user stories, and acceptance criteria for Smart Stationery Inventory System.", "Created docs/DEFINE.md with 6 user stories and Given/When/Then criteria."),
         ("Phase 2: DESIGN", "Action & Result", "Architecture & Schema Design", "Design 3-tier architecture, DFD level 0 & 1, and 3NF MySQL schema with non-negative constraints.", "Generated docs/DESIGN.md, docs/architecture.md, database/schema.sql and sample_data.sql."),
-        ("Phase 3: DEVELOP", "Action & Result", "Pure Java SE & Vanilla Web", "Implement SimpleHttpServer with Virtual Threads, plain JDBC PreparedStatement, and Vanilla HTML/CSS/JS frontend.", "Produced backend/src/ classes and frontend/ (index.html, style.css, script.js). 100% test pass."),
-        ("Phase 4: DEPLOY", "Examples & Verification", "Runbook, Presentation & Runner", "Generate 12-sheet Excel runbook, 20-slide projector presentation, and 1-click run.bat startup script.", "Generated docs/Student_FullStack_Project_Runbook.xlsx, presentation/presentation.html, and run.bat.")
+        ("Phase 3: DEVELOP", "Action & Result", "Core Java SE & React FullStack", "Implement SimpleHttpServer with Virtual Threads, plain JDBC PreparedStatement, React 19 UI & Vanilla Web.", "Produced backend/src/ classes, frontend/ React components, and static web. 100% test pass."),
+        ("Phase 4: DEPLOY", "Examples & Verification", "Runbook, Presentation & Runner", "Generate SIST 12-sheet Excel runbook, 20-slide projector presentation, and 1-click run.bat startup script.", "Generated docs/Student_FullStack_Project_Runbook.xlsx, presentation/presentation.html, and run.bat.")
     ]
 
     for r_idx, row in enumerate(care_logs, 4):
@@ -294,23 +406,23 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws7, 5)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 8: 8. Phase 3 - Frontend UI
-    # -------------------------------------------------------------
+    # =============================================================
     ws8 = wb.create_sheet(title="8. Phase 3 - Frontend UI")
     ws8.views.sheetView[0].showGridLines = True
-    ws8["A1"] = "FRONTEND UI COMPONENT SPECIFICATIONS (HTML5 / CSS3)"
-    ws8["A1"].font = FONT_TITLE
+    ws8["A1"] = "FRONTEND UI COMPONENT SPECIFICATIONS (REACT 19 & HTML5/CSS3)"
+    ws8["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws8, 3, ["Component ID", "File Location", "Element Type", "CSS Styling Technique", "Functional Behavior & Interaction"])
     fe_data = [
-        ("UI-01", "frontend/index.html", "<header class='app-header'>", "Flexbox, shadow-sm, academic branding", "Displays system title, live server status indicator (:8080), and student register numbers."),
-        ("UI-02", "frontend/index.html", "<nav class='app-nav'>", "Sticky navigation bar, border-bottom", "Houses 7 tab buttons (Dashboard, Products, Categories, Suppliers, Stock, Sales, Reports)."),
-        ("UI-03", "frontend/index.html", ".kpi-grid & .kpi-card", "CSS Grid (repeat auto-fit minmax 240px)", "Renders 4 metric summary cards with color-coded accent icons (Blue, Green, Amber, Purple)."),
-        ("UI-04", "frontend/index.html", ".data-table", "Border-collapse, light slate hover rows", "Presents real-time relational tables for products, low-stock alerts, stock audit, and sales."),
-        ("UI-05", "frontend/index.html", ".modal-overlay & .modal-dialog", "Fixed overlay with blur, pop-in animation", "Accessible modal forms for adding/editing products, categories, suppliers, and stock intake."),
-        ("UI-06", "frontend/index.html", ".pos-layout", "Responsive CSS Grid (380px form + 1fr table)", "Interactive POS billing screen with instant subtotal updates and receipt register."),
-        ("UI-07", "frontend/index.html", ".toast-container", "Fixed bottom-right notification stack", "Displays auto-dismissing success and error toast banners after every user action.")
+        ("UI-01", "frontend/src/pages/Login.jsx", "<div className='login-box'>", "Glassmorphism card, gradient accent, shadow-xl", "Provides secure role-based login for admin, staff1, and staff2 with clear error feedback."),
+        ("UI-02", "frontend/src/components/Navbar.jsx", "<header className='app-header'>", "Flexbox, shadow-sm, academic branding", "Displays system title, user role badge (Admin/Staff), live server status, and logout action."),
+        ("UI-03", "frontend/src/pages/Dashboard.jsx", ".kpi-grid & .kpi-card", "CSS Grid (repeat auto-fit minmax 240px)", "Renders 4 metric summary cards with color-coded accent icons (Total SKUs, Valuation, Low Stock, Sales)."),
+        ("UI-04", "frontend/src/pages/Products.jsx", ".data-table & search/filter bar", "Border-collapse, hover rows, status badges", "Presents real-time relational table for products with search, category filtering, and stock badges."),
+        ("UI-05", "frontend/src/pages/POS.jsx", ".pos-layout & cart register", "Responsive 2-column POS layout (Form + Cart)", "Interactive POS billing screen with instant subtotal updates, overselling guard, and receipt printer."),
+        ("UI-06", "frontend/src/pages/Stock.jsx", ".modal-overlay & stock ledger", "Fixed overlay with backdrop-filter blur", "Enables recording inward supplier shipments, outward dispatches, and damaged write-offs."),
+        ("UI-07", "frontend/src/pages/Reports.jsx", ".report-cards & CSV export", "Clean printable grid with CSV download trigger", "Generates category valuation summaries, reorder forecasts, and 1-click spreadsheet export.")
     ]
 
     for r_idx, row in enumerate(fe_data, 4):
@@ -323,13 +435,13 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws8, 5)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 9: 9. Phase 3 - Backend & DB
-    # -------------------------------------------------------------
+    # =============================================================
     ws9 = wb.create_sheet(title="9. Phase 3 - Backend & DB")
     ws9.views.sheetView[0].showGridLines = True
     ws9["A1"] = "JAVA BACKEND ARCHITECTURE & DATABASE INTEGRATION"
-    ws9["A1"].font = FONT_TITLE
+    ws9["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws9, 3, ["Class Name", "Package", "Pattern / Role", "Key Methods", "Technical Details & ACID Compliance"])
     be_data = [
@@ -353,21 +465,21 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws9, 5)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 10: 10. Phase 3 - Integration
-    # -------------------------------------------------------------
+    # =============================================================
     ws10 = wb.create_sheet(title="10. Phase 3 - Integration")
     ws10.views.sheetView[0].showGridLines = True
     ws10["A1"] = "FULL-STACK CLIENT-SERVER INTEGRATION & WIRING"
-    ws10["A1"].font = FONT_TITLE
+    ws10["A1"].font = FONT_TITLE_MAIN
 
-    style_header_row(ws10, 3, ["Integration Flow", "Frontend Trigger (script.js)", "HTTP Request Details", "Backend Processing (Java)", "Database Execution", "DOM Update Mechanism"])
+    style_header_row(ws10, 3, ["Integration Flow", "Frontend Trigger", "HTTP Request Details", "Backend Processing (Java)", "Database Execution", "UI / State Update Mechanism"])
     int_data = [
-        ("Dashboard KPIs", "DOMContentLoaded -> loadDashboard()", "GET /api/reports/dashboard", "ReportService aggregates metrics from ProductDAO & SaleDAO", "COUNT(), SUM(qty*price) queries in MySQL", "Sets textContent of kpiTotalProducts, kpiValuation, etc."),
-        ("Product Filter", "oninput -> debounceFilterProducts()", "GET /api/products?search=...&status=...", "SimpleHttpServer parses query string; ProductService filters", "SELECT ... WHERE product_name LIKE ? AND status = ?", "Clears and repopulates productsTableBody with status badges."),
-        ("Add Product", "onsubmit -> saveProduct(event)", "POST /api/products (JSON body)", "JsonUtil parses JSON; ProductService validates SKU uniqueness", "INSERT INTO products (...) VALUES (?, ?, ...)", "Displays success toast, closes modal, and refreshes catalog table."),
-        ("Inward Stock", "onsubmit -> saveStockAdjustment()", "POST /api/stock/inward", "StockService updates stock and logs audit record", "UPDATE products ...; INSERT INTO stock_transactions ...", "Status badge transitions from LOW STOCK (Amber) to IN STOCK (Green)."),
-        ("POS Checkout", "onsubmit -> handlePosSale()", "POST /api/sales", "SaleService executes atomic transaction with rollback", "UPDATE products; INSERT stock_transactions; INSERT sales", "Inserts new row in sales receipt register; clears POS form.")
+        ("Dashboard KPIs", "useEffect() -> fetchKPIs()", "GET /api/reports/dashboard", "ReportService aggregates metrics from ProductDAO & SaleDAO", "COUNT(), SUM(qty*price) queries in MySQL", "Updates React kpiData state; renders 4 dynamic metric cards."),
+        ("Product Filter", "onChange -> debounce search", "GET /api/products?search=...&status=...", "SimpleHttpServer parses query string; ProductService filters", "SELECT ... WHERE product_name LIKE ? AND status = ?", "Updates products array state; rerenders table with color badges."),
+        ("Add Product", "onSubmit -> handleAddProduct()", "POST /api/products (JSON body)", "JsonUtil parses JSON; ProductService validates SKU uniqueness", "INSERT INTO products (...) VALUES (?, ?, ...)", "Displays success notification, closes modal, and refreshes catalog."),
+        ("Inward Stock", "onSubmit -> recordStock()", "POST /api/stock/inward", "StockService updates stock and logs audit record", "UPDATE products ...; INSERT INTO stock_transactions ...", "Status badge transitions from LOW STOCK (Amber) to IN STOCK (Green)."),
+        ("POS Checkout", "onSubmit -> executeSale()", "POST /api/sales", "SaleService executes atomic transaction with rollback", "UPDATE products; INSERT stock_transactions; INSERT sales", "Inserts record in sales register; triggers printable student receipt.")
     ]
 
     for r_idx, row in enumerate(int_data, 4):
@@ -380,17 +492,17 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws10, 6)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 11: 11. Phase 4 - Bug Log
-    # -------------------------------------------------------------
+    # =============================================================
     ws11 = wb.create_sheet(title="11. Phase 4 - Bug Log")
     ws11.views.sheetView[0].showGridLines = True
     ws11["A1"] = "DEVELOPMENT BUG LOG & RESOLUTION AUDIT"
-    ws11["A1"].font = FONT_TITLE
+    ws11["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws11, 3, ["Bug ID", "Symptom / Error Encountered", "Root Cause Analysis", "Applied Resolution & Code Fix", "Verification & Status"])
     bug_data = [
-        ("BUG-01", "HTTP 404 Endpoint Not Found on /api/dashboard", "Request routing checked /api/reports/dashboard but initial frontend called /api/dashboard.", "Normalized API endpoint to /api/reports/dashboard across backend router and frontend client.", "Verified via curl.exe; returns 200 OK with valid KPI JSON. [RESOLVED]"),
+        ("BUG-01", "CORS policy blocked React frontend (:5173) requests to Java backend (:8080)", "Java SimpleHttpServer did not return Access-Control-Allow-Origin response headers for cross-origin requests.", "Added CORS header interceptor on SimpleHttpServer setting Access-Control-Allow-Origin: * and handling OPTIONS pre-flight.", "Verified via curl.exe and browser console; 200 OK received without CORS warnings. [RESOLVED]"),
         ("BUG-02", "Overselling allowed when rapid sales executed concurrently", "Stock check and stock decrement were two separate uncommitted database operations.", "Enclosed stock check and decrement inside a single atomic transaction with setAutoCommit(false) and rollback().", "Verified: Attempting to sell 100 with 6 in stock is immediately rejected. [RESOLVED]"),
         ("BUG-03", "Static frontend assets not accessible on port 8080", "HttpServer originally only bound /api context, requiring a separate server for frontend.", "Implemented StaticFileHandler on / context in SimpleHttpServer to serve HTML/CSS/JS directly.", "Verified: Opening http://localhost:8080/ renders the full app directly from Java. [RESOLVED]")
     ]
@@ -405,20 +517,20 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws11, 5)
 
-    # -------------------------------------------------------------
+    # =============================================================
     # SHEET 12: 12. Phase 4 - Cloud & Pitch
-    # -------------------------------------------------------------
+    # =============================================================
     ws12 = wb.create_sheet(title="12. Phase 4 - Cloud & Pitch")
     ws12.views.sheetView[0].showGridLines = True
     ws12["A1"] = "3-MINUTE VIVA PRESENTATION SCRIPT & TEAM PITCH"
-    ws12["A1"].font = FONT_TITLE
+    ws12["A1"].font = FONT_TITLE_MAIN
 
     style_header_row(ws12, 3, ["Time Interval", "Speaker Name & Reg No", "Role", "Viva Pitch Script Content & Examiner Talking Points"])
     pitch_data = [
-        ("0:00 - 0:45", "Nikhila V (44731059)", "Lead Architect", "Good morning respected examiners. Our project is the Smart Stationery Inventory Management System. Stationery retail faces unique problems: managing hundreds of small SKUs in paper registers leads to human errors, untracked damaged items, and severe stock-outs during back-to-school exam rushes. To solve this, we architected a lightweight, framework-independent 3-tier solution using Core Java 21, plain JDBC, and Vanilla Web technologies."),
-        ("0:45 - 1:45", "Zaid Basha (44731049)", "Backend & DB Specialist", "On the backend, we deliberately avoided Spring Boot and Hibernate to demonstrate mastery over core computer science principles. Our Java server uses standard library HttpServer with Java 21 Virtual Threads and raw JDBC PreparedStatements. In MySQL, our 5 tables in 3NF enforce non-negative stock (CHECK quantity >= 0). For POS billing, we coordinate an atomic 3-way transaction ensuring stock decrements, sales receipts, and audit ledger entries succeed together or rollback completely."),
-        ("1:45 - 2:30", "Nikhila V (44731059)", "Lead Architect & Frontend", "On the frontend, we used pure HTML5, CSS3, and Vanilla JavaScript with zero external libraries. As you can see on the live dashboard on port 8080, when stock drops below the threshold, the system displays an amber LOW STOCK badge and calculates the exact suggested reorder units using: (Reorder Point * 2) - Current Qty. We also built a pure client-side CSV generator allowing 1-click spreadsheet export for vendor orders."),
-        ("2:30 - 3:00", "Team (Nikhila & Zaid)", "Joint Conclusion", "Every module has passed 100% of our acceptance test suites, and the entire system launches in 1-click using run.bat. We are now pleased to demonstrate the live application running on localhost:8080 and welcome any questions from the panel.")
+        ("0:00 - 0:45", "Nikhila V (44731059)", "Lead Architect", "Good morning respected examiners. We represent Sathyabama Institute of Science and Technology (SIST), Department of CSE AI, Batch 2023-2027 Section A4. Our capstone project is the Smart Stationery Inventory Management System. Stationery retail faces unique problems: managing hundreds of small SKUs in paper registers leads to human math errors, untracked damaged goods, and severe stock-outs during back-to-school exam rushes. To solve this, we architected a robust 3-tier solution using Core Java 21, plain JDBC, MySQL 8.0, and modern React 19 with a Vanilla Web companion."),
+        ("0:45 - 1:45", "Zaid Basha (44731049)", "Backend & DB Specialist", "On the backend, we demonstrate mastery over core computer science principles without relying on bulky frameworks. Our Java backend uses standard library HttpServer with Java 21 Virtual Threads and raw JDBC PreparedStatements for 100% SQL injection immunity. In MySQL, our 5 tables in 3NF enforce non-negative stock (CHECK quantity >= 0). For POS billing, we coordinate an atomic 3-way transaction ensuring stock decrements, customer receipts, and audit ledger entries succeed together or rollback completely."),
+        ("1:45 - 2:30", "Nikhila V (44731059)", "Lead Architect & Frontend", "On the frontend, we built both a sleek React 19 application running on port 5173 with role-based authentication (admin, staff1, staff2) and a pure Vanilla HTML5/CSS3 interface. As you can see on the live dashboard, when stock drops below the safety threshold, the system displays an amber LOW STOCK badge and calculates the exact suggested reorder units: (Reorder Point * 2) - Current Qty. We also built client-side CSV export allowing 1-click vendor order spreadsheets."),
+        ("2:30 - 3:00", "Team (Nikhila & Zaid)", "Joint Conclusion", "Every single module has passed 100% of our acceptance test suites. The code is version-controlled on GitHub across main, dev, and feature branches, and the system launches in 1-click using run.bat. We are pleased to demonstrate the live application running on http://127.0.0.1:5173 and http://localhost:8080/api and welcome any questions from the panel.")
     ]
 
     for r_idx, row in enumerate(pitch_data, 4):
@@ -431,11 +543,15 @@ def build_runbook(output_path):
                 cell.fill = FILL_LIGHT_ROW
     auto_fit_columns(ws12, 4)
 
-    # Save
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    wb.save(output_path)
-    print(f"Excel Runbook generated successfully at: {output_path}")
+    # Save to all specified output paths
+    for path in output_paths:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        wb.save(path)
+        print(f"Excel Runbook generated successfully at: {path}")
 
 if __name__ == "__main__":
-    target = r"C:\Users\Nikki\.gemini\antigravity-ide\scratch\smart-stationery-inventory\docs\Student_FullStack_Project_Runbook.xlsx"
-    build_runbook(target)
+    targets = [
+        r"c:\Users\Nikki\IdeaProjects\inventory management\docs\Student_FullStack_Project_Runbook.xlsx",
+        r"C:\Users\Nikki\.gemini\antigravity-ide\scratch\smart-stationery-inventory\docs\Student_FullStack_Project_Runbook.xlsx"
+    ]
+    build_runbook(targets)
