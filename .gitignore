@@ -4,10 +4,12 @@ Desktop.ini
 .DS_Store
 
 # Java Build & Class Files
+backend/bin/
 backend/out/
 *.class
 *.jar
 !backend/lib/mysql-connector-j.jar
+!lib/mysql-connector-j.jar
 
 # Frontend Dependencies & Build Output
 frontend/node_modules/
