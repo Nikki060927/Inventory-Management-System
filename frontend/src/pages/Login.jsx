@@ -8,16 +8,49 @@ export default function Login({ onLogin, showToast }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleRoleChange = (role) => {
+  const handleRoleTab = (role) => {
     setSelectedRole(role);
     setError('');
     if (role === 'ADMIN') {
       setUsername('admin');
       setPassword('admin123');
-    } else {
-      setUsername('staff');
+    } else if (username === 'admin') {
+      setUsername('staff1');
       setPassword('staff123');
     }
+  };
+
+  const authenticate = (userStr, passStr) => {
+    const u = userStr.trim().toLowerCase();
+    const p = passStr.trim();
+
+    if (u === 'admin') {
+      if (p === 'admin123' || p === 'admin' || p === '123' || p === 'password') {
+        return { username: 'admin', role: 'ADMIN', name: 'Admin' };
+      }
+      return { error: 'Invalid password for Admin. Try: admin123' };
+    }
+
+    if (u === 'staff1' || u === 'staff') {
+      if (p === 'staff123' || p === 'staff' || p === '123' || p === 'password') {
+        return { username: 'staff1', role: 'STAFF', name: 'Staff 1' };
+      }
+      return { error: 'Invalid password for Staff 1. Try: staff123' };
+    }
+
+    if (u === 'staff2') {
+      if (p === 'staff123' || p === 'staff' || p === '123' || p === 'password') {
+        return { username: 'staff2', role: 'STAFF', name: 'Staff 2' };
+      }
+      return { error: 'Invalid password for Staff 2. Try: staff123' };
+    }
+
+    // Generic fallback for any other staff username (staff3, etc.)
+    if (u.startsWith('staff')) {
+      return { username: u, role: 'STAFF', name: u.charAt(0).toUpperCase() + u.slice(1) };
+    }
+
+    return { error: 'Unknown username. Use admin, staff1, or staff2' };
   };
 
   const handleSubmit = (e) => {
@@ -27,49 +60,23 @@ export default function Login({ onLogin, showToast }) {
 
     setTimeout(() => {
       setLoading(false);
-      const cleanUser = username.trim().toLowerCase();
-      const cleanPass = password.trim();
-
-      // Demo authentication logic
-      if (selectedRole === 'ADMIN') {
-        if (cleanUser === 'admin' && (cleanPass === 'admin123' || cleanPass === 'admin' || cleanPass === '123' || cleanPass === 'password')) {
-          onLogin({
-            username: 'admin',
-            role: 'ADMIN',
-            name: 'Nikhila V (Store Admin)',
-          });
-        } else {
-          setError('Invalid Admin credentials. Try demo: admin / admin123');
-          if (showToast) showToast('Invalid Admin credentials. Try demo: admin / admin123', 'error');
-        }
+      const result = authenticate(username, password);
+      if (result.error) {
+        setError(result.error);
+        if (showToast) showToast(result.error, 'error');
       } else {
-        if (cleanUser === 'staff' && (cleanPass === 'staff123' || cleanPass === 'staff' || cleanPass === '123' || cleanPass === 'password')) {
-          onLogin({
-            username: 'staff',
-            role: 'STAFF',
-            name: 'Zaid Basha (Store Staff)',
-          });
-        } else {
-          setError('Invalid Staff credentials. Try demo: staff / staff123');
-          if (showToast) showToast('Invalid Staff credentials. Try demo: staff / staff123', 'error');
-        }
+        onLogin(result);
       }
-    }, 400);
+    }, 300);
   };
 
-  const handleQuickLogin = (role) => {
-    if (role === 'ADMIN') {
-      onLogin({
-        username: 'admin',
-        role: 'ADMIN',
-        name: 'Nikhila V (Store Admin)',
-      });
-    } else {
-      onLogin({
-        username: 'staff',
-        role: 'STAFF',
-        name: 'Zaid Basha (Store Staff)',
-      });
+  const handleQuickLogin = (account) => {
+    if (account === 'admin') {
+      onLogin({ username: 'admin', role: 'ADMIN', name: 'Admin' });
+    } else if (account === 'staff1') {
+      onLogin({ username: 'staff1', role: 'STAFF', name: 'Staff 1' });
+    } else if (account === 'staff2') {
+      onLogin({ username: 'staff2', role: 'STAFF', name: 'Staff 2' });
     }
   };
 
@@ -82,7 +89,7 @@ export default function Login({ onLogin, showToast }) {
           <h1 className="login-title">Smart Stationery</h1>
           <p className="login-subtitle">Inventory Management System</p>
           <div className="login-badge">
-            Academic Full-Stack Project • Java 21 + MySQL + React 19
+            Role-Based Access Control • Admin &amp; Staff
           </div>
         </div>
 
@@ -91,18 +98,18 @@ export default function Login({ onLogin, showToast }) {
           <button
             type="button"
             className={`role-tab-btn ${selectedRole === 'ADMIN' ? 'active' : ''}`}
-            onClick={() => handleRoleChange('ADMIN')}
+            onClick={() => handleRoleTab('ADMIN')}
           >
             <span className="tab-icon">🛡️</span>
             <div>
-              <div className="tab-title">Store Admin</div>
+              <div className="tab-title">Administrator</div>
               <div className="tab-desc">Full System Access</div>
             </div>
           </button>
           <button
             type="button"
             className={`role-tab-btn ${selectedRole === 'STAFF' ? 'active' : ''}`}
-            onClick={() => handleRoleChange('STAFF')}
+            onClick={() => handleRoleTab('STAFF')}
           >
             <span className="tab-icon">💼</span>
             <div>
@@ -124,7 +131,7 @@ export default function Login({ onLogin, showToast }) {
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <label className="form-label" htmlFor="username">
-              Username
+              Username (admin, staff1, staff2)
             </label>
             <div className="input-with-icon">
               <span className="input-icon">👤</span>
@@ -132,7 +139,7 @@ export default function Login({ onLogin, showToast }) {
                 id="username"
                 type="text"
                 className="form-input"
-                placeholder={selectedRole === 'ADMIN' ? 'admin' : 'staff'}
+                placeholder="admin, staff1, or staff2"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -173,35 +180,39 @@ export default function Login({ onLogin, showToast }) {
             className="btn btn-primary login-submit-btn"
             disabled={loading}
           >
-            {loading ? (
-              <span>Authenticating...</span>
-            ) : (
-              <span>Sign In as {selectedRole === 'ADMIN' ? 'Admin' : 'Staff'} →</span>
-            )}
+            {loading ? <span>Signing in...</span> : <span>Sign In →</span>}
           </button>
         </form>
 
         {/* Quick Demo One-Click Sign-In */}
         <div className="quick-login-section">
           <div className="divider-text">
-            <span>OR 1-CLICK DEMO LOGIN</span>
+            <span>1-CLICK QUICK SIGN IN</span>
           </div>
-          <div className="quick-buttons-row">
+          <div className="quick-buttons-row" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
             <button
               type="button"
               className="quick-btn quick-admin"
-              onClick={() => handleQuickLogin('ADMIN')}
-              title="Instant Admin Sign In"
+              onClick={() => handleQuickLogin('admin')}
+              title="Sign in as Admin"
             >
-              🚀 Demo Admin (Nikhila V)
+              🛡️ Admin
             </button>
             <button
               type="button"
               className="quick-btn quick-staff"
-              onClick={() => handleQuickLogin('STAFF')}
-              title="Instant Staff Sign In"
+              onClick={() => handleQuickLogin('staff1')}
+              title="Sign in as Staff 1"
             >
-              🚀 Demo Staff (Zaid Basha)
+              💼 Staff 1
+            </button>
+            <button
+              type="button"
+              className="quick-btn quick-staff"
+              onClick={() => handleQuickLogin('staff2')}
+              title="Sign in as Staff 2"
+            >
+              💼 Staff 2
             </button>
           </div>
         </div>
@@ -209,12 +220,10 @@ export default function Login({ onLogin, showToast }) {
         {/* Credentials Info Helper */}
         <div className="login-footer-info">
           <div className="credential-hint">
-            <strong>Demo Credentials:</strong><br />
-            • Admin: <code>admin</code> / <code>admin123</code><br />
-            • Staff: <code>staff</code> / <code>staff123</code>
-          </div>
-          <div className="team-credit">
-            Lead Architect: <strong>Nikhila V (44731059)</strong> • Specialist: <strong>Zaid Basha (44731049)</strong>
+            <strong>Default Accounts:</strong><br />
+            • <code>admin</code> / <code>admin123</code> (Full permissions)<br />
+            • <code>staff1</code> / <code>staff123</code> (POS &amp; Stock)<br />
+            • <code>staff2</code> / <code>staff123</code> (POS &amp; Stock)
           </div>
         </div>
       </div>

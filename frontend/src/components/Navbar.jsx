@@ -28,28 +28,35 @@ export default function Navbar({ activePage, userRole, setUserRole, currentUser,
         {currentUser && (
           <div className="user-profile-badge" title="Active Logged-In User">
             <span>👤</span>
-            <span>{currentUser.name || (userRole === 'ADMIN' ? 'Store Admin' : 'Store Staff')}</span>
+            <span>{currentUser.name || (userRole === 'ADMIN' ? 'Admin' : 'Staff')}</span>
             <span className={`user-role-tag ${userRole === 'ADMIN' ? 'admin' : 'staff'}`}>
               {userRole}
             </span>
           </div>
         )}
 
-        {/* Role Quick Toggle for Viva Demonstration */}
-        <div className="role-toggle" title="Switch User Role for Academic Demonstration">
+        {/* Role Quick Toggle */}
+        <div className="role-toggle" title="Switch User Profile">
           <button
             type="button"
-            className={`role-btn ${userRole === 'ADMIN' ? 'active' : ''}`}
-            onClick={() => setUserRole('ADMIN')}
+            className={`role-btn ${currentUser?.username === 'admin' ? 'active' : ''}`}
+            onClick={() => setUserRole('ADMIN', 'Admin')}
           >
             Admin
           </button>
           <button
             type="button"
-            className={`role-btn ${userRole === 'STAFF' ? 'active' : ''}`}
-            onClick={() => setUserRole('STAFF')}
+            className={`role-btn ${currentUser?.username === 'staff1' ? 'active' : ''}`}
+            onClick={() => setUserRole('STAFF', 'Staff 1')}
           >
-            Staff
+            Staff 1
+          </button>
+          <button
+            type="button"
+            className={`role-btn ${currentUser?.username === 'staff2' ? 'active' : ''}`}
+            onClick={() => setUserRole('STAFF', 'Staff 2')}
+          >
+            Staff 2
           </button>
         </div>
 

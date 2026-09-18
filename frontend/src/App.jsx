@@ -38,7 +38,7 @@ export default function App() {
     } catch (e) {
       console.warn('Could not save session to localStorage', e);
     }
-    showToast(`Welcome back, ${user.name}!`, 'success');
+    showToast(`Signed in as ${user.name}`, 'success');
   };
 
   const handleLogout = () => {
@@ -51,12 +51,14 @@ export default function App() {
     showToast('Signed out successfully.', 'success');
   };
 
-  const handleSetUserRole = (newRole) => {
+  const handleSetUserRole = (newRole, displayName) => {
     if (!currentUser) return;
+    const name = displayName || (newRole === 'ADMIN' ? 'Admin' : 'Staff 1');
+    const username = newRole === 'ADMIN' ? 'admin' : (displayName === 'Staff 2' ? 'staff2' : 'staff1');
     const updated = {
-      ...currentUser,
+      username,
       role: newRole,
-      name: newRole === 'ADMIN' ? 'Nikhila V (Store Admin)' : 'Zaid Basha (Store Staff)',
+      name,
     };
     setCurrentUser(updated);
     try {
@@ -64,7 +66,7 @@ export default function App() {
     } catch (e) {
       console.warn('Could not update role', e);
     }
-    showToast(`Switched role to ${newRole}`, 'success');
+    showToast(`Active user switched to ${name}`, 'success');
   };
 
   // If not logged in, render the Login Screen
