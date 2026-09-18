@@ -1,0 +1,56 @@
+<mxfile host="app.diagrams.net" modified="2026-09-18T14:40:00.000Z" agent="Antigravity" version="21.0.0">
+  <diagram id="system-architecture" name="System Architecture">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Presentation Tier -->
+        <mxCell id="tier1" value="PRESENTATION TIER (React 18 Single Page Application)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e0f2fe;strokeColor=#0284c7;" vertex="1" parent="1">
+          <mxGeometry x="80" y="60" width="940" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ui_components" value="React Components: Navbar, Sidebar, ProductTable, StockForm, PointOfSale, LowStockAlert, Reports, ExportCsv&#xa;Client State (Hooks), Search / Filter / Sort / Pagination, HTTP fetch() client (api.js)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="tier1">
+          <mxGeometry y="30" width="940" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Connection 1 -->
+        <mxCell id="edge1" value="HTTP / REST Requests (JSON over port 8080)&#xa;GET, POST, PUT, DELETE with CORS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#4f46e5;fontStyle=1;" edge="1" parent="1" source="tier1" target="tier2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Application Tier -->
+        <mxCell id="tier2" value="APPLICATION TIER (Core Java 21 LTS - Zero Heavy Frameworks)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#eef2ff;strokeColor=#4f46e5;" vertex="1" parent="1">
+          <mxGeometry x="80" y="270" width="940" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="server_layer" value="1. REST Server &amp; Handlers: SimpleHttpServer (com.sun.net.httpserver.HttpServer) | Java 21 Virtual Threads | CorsHandler" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;" vertex="1" parent="tier2">
+          <mxGeometry y="30" width="940" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="service_layer" value="2. Business Service Layer: ProductService | StockService (Inward/Outward/Damaged) | SaleService (Atomic Billing) | ReportService" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;" vertex="1" parent="tier2">
+          <mxGeometry y="70" width="940" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="smart_rules" value="3. Smart Rules &amp; Validations: Low-Stock Detection (qty &lt;= reorder) | Suggested Reorder ((reorder * 2) - qty) | Valuation | Negative Stock Prevention" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;" vertex="1" parent="tier2">
+          <mxGeometry y="110" width="940" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="dao_layer" value="4. Data Access Layer (DAO): ProductDAO | StockTransactionDAO | SaleDAO | CategoryDAO | SupplierDAO (PreparedStatement Only)" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;" vertex="1" parent="tier2">
+          <mxGeometry y="150" width="940" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="util_layer" value="5. Utilities &amp; Infrastructure: DBConnection (DriverManager) | db.properties | JsonUtil | ValidationUtil" style="text;html=1;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;" vertex="1" parent="tier2">
+          <mxGeometry y="190" width="940" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Connection 2 -->
+        <mxCell id="edge2" value="Plain JDBC Type 4 Connector/J&#xa;ACID Transactions (conn.setAutoCommit(false), commit(), rollback())" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#059669;fontStyle=1;" edge="1" parent="1" source="tier2" target="tier3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Data Tier -->
+        <mxCell id="tier3" value="DATA TIER (MySQL 8.0 Relational Database Engine)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#ecfdf5;strokeColor=#059669;" vertex="1" parent="1">
+          <mxGeometry x="80" y="580" width="940" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="db_tables" value="Relational Tables: categories (id, name) | suppliers (id, name, phone, email, address, status) | products (id, name, sku, barcode, price, qty, reorder, bin)&#xa;stock_transactions (id, product_id, type, qty, prev_qty, new_qty, date, remarks) | sales (id, product_id, qty_sold, unit_price, total_amount, date)&#xa;Engine: InnoDB | Constraints: Foreign Keys ON DELETE RESTRICT/CASCADE | CHECK (price &gt; 0, qty &gt;= 0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="tier3">
+          <mxGeometry y="30" width="940" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

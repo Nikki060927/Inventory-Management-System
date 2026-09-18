@@ -1,0 +1,378 @@
+{
+	"info": {
+		"_postman_id": "smart-stationery-inventory-api",
+		"name": "Smart Stationery Inventory Management System",
+		"description": "Complete REST API collection for Smart Stationery Inventory Management System (Core Java 21 + JDBC + MySQL).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "GET All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "GET Product By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "products", "1"]
+						}
+					}
+				},
+				{
+					"name": "POST Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productName\": \"Geometry Box\",\n    \"sku\": \"GEOM001\",\n    \"barcode\": \"890100000006\",\n    \"categoryId\": 4,\n    \"supplierId\": 3,\n    \"unitPrice\": 120.00,\n    \"quantity\": 20,\n    \"reorderPoint\": 5,\n    \"binLocation\": \"C01\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "PUT Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productName\": \"Geometry Box Premium\",\n    \"sku\": \"GEOM001\",\n    \"barcode\": \"890100000006\",\n    \"categoryId\": 4,\n    \"supplierId\": 3,\n    \"unitPrice\": 135.00,\n    \"reorderPoint\": 8,\n    \"binLocation\": \"C02\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/products/6",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "products", "6"]
+						}
+					}
+				},
+				{
+					"name": "DELETE Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/products/6",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "products", "6"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "GET All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/categories",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "categories"]
+						}
+					}
+				},
+				{
+					"name": "POST Create Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"categoryName\": \"Files & Folders\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/categories",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "categories"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Suppliers",
+			"item": [
+				{
+					"name": "GET All Suppliers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/suppliers",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "suppliers"]
+						}
+					}
+				},
+				{
+					"name": "POST Create Supplier",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"supplierName\": \"Navneet Publications\",\n    \"phone\": \"9876500000\",\n    \"email\": \"orders@navneet.example.com\",\n    \"address\": \"Gala 4, Stationery Hub, Pune\",\n    \"status\": \"ACTIVE\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/suppliers",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "suppliers"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Stock Operations",
+			"item": [
+				{
+					"name": "POST Stock Inward",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": 1,\n    \"quantity\": 20,\n    \"remarks\": \"Shipment receipt Invoice #492\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/stock/inward",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "stock", "inward"]
+						}
+					}
+				},
+				{
+					"name": "POST Stock Outward",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": 1,\n    \"quantity\": 5,\n    \"remarks\": \"Store counter dispatch\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/stock/outward",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "stock", "outward"]
+						}
+					}
+				},
+				{
+					"name": "POST Stock Damaged",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": 2,\n    \"quantity\": 1,\n    \"remarks\": \"Torn cover during handling\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/stock/damaged",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "stock", "damaged"]
+						}
+					}
+				},
+				{
+					"name": "GET Stock History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stock/history",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "stock", "history"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Sales (POS)",
+			"item": [
+				{
+					"name": "POST Record Sale",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": 1,\n    \"quantitySold\": 3\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/sales",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "sales"]
+						}
+					}
+				},
+				{
+					"name": "GET Sales History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/sales",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "sales"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Reports & Dashboard",
+			"item": [
+				{
+					"name": "GET Dashboard KPI Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/reports/dashboard",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "reports", "dashboard"]
+						}
+					}
+				},
+				{
+					"name": "GET Low Stock & Reorder Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/reports/low-stock",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "reports", "low-stock"]
+						}
+					}
+				},
+				{
+					"name": "GET Inventory Valuation Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/reports/valuation",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "reports", "valuation"]
+						}
+					}
+				},
+				{
+					"name": "GET Stock Movement History Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/reports/stock-movement",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "reports", "stock-movement"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

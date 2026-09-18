@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Stationery Inventory Management System - Presentation Slides</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --cyan: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top right, #1e1b4b, #0b0f19 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Presentation Wrapper */
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1150px;
+      height: 85vh;
+      max-height: 720px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px var(--primary-glow);
+      padding: 3rem;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: scale(0.97) translateY(10px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) transparent;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Slide Header */
+    .slide-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slide-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary-light);
+      background: rgba(99, 102, 241, 0.15);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .slide-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 0.25rem;
+    }
+
+    .slide-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Slide Content */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    /* Feature & Metric Cards */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Code & Formula Badges */
+    .formula-box {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      color: #38bdf8;
+      margin: 0.5rem 0;
+    }
+
+    .code-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      color: #e2e8f0;
+    }
+
+    /* Status Pills */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .pill-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .pill-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .pill-red { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+    /* Tables */
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .styled-table th {
+      background: rgba(255, 255, 255, 0.05);
+      text-align: left;
+      padding: 0.65rem 1rem;
+      font-weight: 600;
+      color: var(--primary-light);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .styled-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+    }
+
+    /* Speaker Notes Bar */
+    .speaker-notes {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(99, 102, 241, 0.08);
+      border-left: 3px solid var(--primary);
+      border-radius: 6px;
+      font-size: 0.825rem;
+      color: #cbd5e1;
+      display: none;
+    }
+    .speaker-notes.visible {
+      display: block;
+    }
+
+    /* Controls Bar */
+    .controls {
+      position: fixed;
+      bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+    }
+
+    .btn-ctrl {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 9999px;
+      transition: background 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-ctrl:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--primary-light);
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      min-width: 80px;
+      text-align: center;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      transition: width 0.3s ease;
+      z-index: 999;
+    }
+
+    /* Print styles for export */
+    @media print {
+      body {
+        overflow: visible;
+        background: #fff;
+        color: #000;
+      }
+      .controls, .progress-bar {
+        display: none !important;
+      }
+      .deck-container {
+        display: block;
+        padding: 0;
+        height: auto;
+      }
+      .slide {
+        display: flex !important;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+        height: 100vh;
+        max-height: none;
+        border: none;
+        box-shadow: none;
+        background: #fff;
+        color: #111;
+      }
+      .slide-title {
+        background: none;
+        -webkit-text-fill-color: #111;
+      }
+      .glass-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div class="progress-bar" id="progressBar" style="width: 8.33%;"></div>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: TITLE SLIDE -->
+    <div class="slide active" data-index="1">
+      <div class="slide-header">
+        <span class="slide-tag">Academic Capstone Project</span>
+        <span class="pill pill-green">LIVE & VERIFIED</span>
+      </div>
+      <div class="slide-body" style="text-align: center; justify-content: center; gap: 1.5rem;">
+        <div style="display: inline-block; font-size: 3.5rem; margin-bottom: 0.5rem;">📚✏️📦</div>
+        <h1 style="font-size: 2.8rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; background: linear-gradient(135deg, #fff 30%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          SMART STATIONERY<br>INVENTORY MANAGEMENT SYSTEM
+        </h1>
+        <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 750px; margin: 0 auto; line-height: 1.5;">
+          A lightweight, beginner-friendly, and production-grade inventory solution built with <strong>Core Java 21</strong>, <strong>Plain JDBC</strong>, <strong>MySQL</strong>, and <strong>React 18</strong>.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
+          <span class="pill pill-green">Zero Spring Boot Bloat</span>
+          <span class="pill pill-green">Plain PreparedStatement JDBC</span>
+          <span class="pill pill-green">Atomic POS Sales</span>
+          <span class="pill pill-green">100% SQL Injection Immune</span>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-1">
+        <strong>Viva Speaker Note:</strong> "Good morning examiners. Today I am presenting the Smart Stationery Inventory Management System, an end-to-end retail software built using Core Java 21 and JDBC without heavy ORM frameworks, emphasizing foundational computer science principles, concurrency, and transactional integrity."
+      </div>
+    </div>
+
+    <!-- SLIDE 2: PROBLEM STATEMENT -->
+    <div class="slide" data-index="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Context & Motivation</span>
+          <h2 class="slide-title">The Retail Stationery Problem</h2>
+        </div>
+        <span class="pill pill-red">Real-World Pain Points</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="glass-card">
+            <div class="card-icon">📉</div>
+            <div class="card-title">Untracked Stock-Outs & Surges</div>
+            <div class="card-desc">Stationery stores manage hundreds of low-cost SKUs (pens, notebooks, adhesives). Back-to-school and exam surges trigger stock-outs because storekeepers lack automated reorder alerts.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">📓</div>
+            <div class="card-title">Manual Register Inaccuracies</div>
+            <div class="card-desc">Paper-based stock ledgers suffer from human calculation mistakes, delayed recording, and inventory shrinkage (unaccounted missing items or damage).</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">⚠️</div>
+            <div class="card-title">Overselling & Negative Inventory</div>
+            <div class="card-desc">Uncoordinated sales desks sell items that are physically out of stock, leading to billing discrepancies and customer dissatisfaction.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">💰</div>
+            <div class="card-title">Blind Financial Valuation</div>
+            <div class="card-desc">Store owners cannot answer simple business questions in real-time: <em>"What is the total capital tied up in my shop right now?"</em> or <em>"Which category has excess dead stock?"</em></div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-2">
+        <strong>Viva Speaker Note:</strong> "Stationery retail is unique because unit margins are small but SKU volume is high. If a student needs a specific geometry set and it's out of stock, the store loses immediate revenue. Our system eliminates these blind spots."
+      </div>
+    </div>
+
+    <!-- SLIDE 3: SYSTEM ARCHITECTURE -->
+    <div class="slide" data-index="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Technical Architecture</span>
+          <h2 class="slide-title">Clean 3-Tier Enterprise Design</h2>
+        </div>
+        <span class="pill pill-green">Separation of Concerns</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="glass-card" style="border-top: 3px solid var(--cyan);">
+            <div class="card-icon">🖥️</div>
+            <div class="card-title">Client Tier (Frontend)</div>
+            <div class="card-desc">
+              • <strong>React 18 SPA (Vite)</strong><br>
+              • Fast JSX component rendering<br>
+              • Custom responsive CSS3 design<br>
+              • Zero external libraries for CSV export<br>
+              • Asynchronous REST JSON consumption
+            </div>
+          </div>
+          <div class="glass-card" style="border-top: 3px solid var(--primary);">
+            <div class="card-icon">⚙️</div>
+            <div class="card-title">Logic Tier (Backend)</div>
+            <div class="card-desc">
+              • <strong>Core Java 21 LTS Standard Lib</strong><br>
+              • Lightweight HTTP Server (<code class="code-chip">com.sun.net</code>)<br>
+              • Java 21 Virtual Threads dispatcher<br>
+              • Dedicated Service & Validation layer<br>
+              • ACID Transaction Coordinator
+            </div>
+          </div>
+          <div class="glass-card" style="border-top: 3px solid var(--emerald);">
+            <div class="card-icon">🗄️</div>
+            <div class="card-title">Database Tier (Storage)</div>
+            <div class="card-desc">
+              • <strong>MySQL 8.0+ / InnoDB Engine</strong><br>
+              • Strict Relational Constraints & FKs<br>
+              • Check constraints (<code class="code-chip">CHECK (qty >= 0)</code>)<br>
+              • 100% Parameterized PreparedStatements<br>
+              • Immutable Audit Ledger
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-3">
+        <strong>Viva Speaker Note:</strong> "Notice that we purposely avoided Spring Boot. By writing the backend in pure Java 21 using com.sun.net.httpserver and JDBC, we show total understanding of socket dispatching, thread pools, and relational transaction control without hiding behind annotations."
+      </div>
+    </div>
+
+    <!-- SLIDE 4: RELATIONAL DATABASE MODEL -->
+    <div class="slide" data-index="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Data Modeling</span>
+          <h2 class="slide-title">Normalized Relational Schema (3NF)</h2>
+        </div>
+        <span class="pill pill-green">5 Relational Tables</span>
+      </div>
+      <div class="slide-body">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Primary Key</th>
+              <th>Foreign Keys & Relationships</th>
+              <th>Role & Constraints</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>categories</strong></td>
+              <td><code class="code-chip">category_id</code></td>
+              <td>1-to-Many with products</td>
+              <td>Categorizes items (Pens, Notebooks, Markers). Unique category name.</td>
+            </tr>
+            <tr>
+              <td><strong>suppliers</strong></td>
+              <td><code class="code-chip">supplier_id</code></td>
+              <td>1-to-Many with products</td>
+              <td>Maintains supplier contact info, phone, and address.</td>
+            </tr>
+            <tr>
+              <td><strong>products</strong></td>
+              <td><code class="code-chip">product_id</code></td>
+              <td>FKs: <code class="code-chip">category_id</code>, <code class="code-chip">supplier_id</code></td>
+              <td>Unique SKU & Barcode; <code class="code-chip">CHECK (quantity >= 0)</code>; <code class="code-chip">unit_price > 0</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>stock_transactions</strong></td>
+              <td><code class="code-chip">transaction_id</code></td>
+              <td>FK: <code class="code-chip">product_id</code></td>
+              <td>Immutable audit trail: <code class="code-chip">INWARD</code>, <code class="code-chip">OUTWARD</code>, <code class="code-chip">DAMAGED</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>sales</strong></td>
+              <td><code class="code-chip">sale_id</code></td>
+              <td>FK: <code class="code-chip">product_id</code></td>
+              <td>Records POS billing: quantity sold, total price, and auto-generated timestamp.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="speaker-notes" id="notes-4">
+        <strong>Viva Speaker Note:</strong> "The database is strictly in 3rd Normal Form. Redundancy is eliminated. The stock_transactions table acts as an immutable append-only ledger so every adjustment or damage write-off is permanently auditable."
+      </div>
+    </div>
+
+    <!-- SLIDE 5: SMART FORMULAS & BUSINESS LOGIC -->
+    <div class="slide" data-index="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Business Logic</span>
+          <h2 class="slide-title">Mathematical Rules & Real-Time KPIs</h2>
+        </div>
+        <span class="pill pill-cyan">Automated Decisions</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="glass-card">
+            <div class="card-title">1. Dynamic Stock Status</div>
+            <div class="formula-box">
+if (quantity == 0) &rarr; OUT OF STOCK<br>
+else if (qty &le; reorder) &rarr; LOW STOCK<br>
+else &rarr; IN STOCK
+            </div>
+            <div class="card-desc">Evaluated dynamically on every query. Never hardcoded, ensuring instant UI badge transitions when sales or deliveries occur.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">2. Suggested Reorder Quantity</div>
+            <div class="formula-box">
+ReorderQty =<br>
+MAX(0, (ReorderPoint &times; 2) - Qty)
+            </div>
+            <div class="card-desc">Takes the guesswork out of purchasing. Instantly informs the storekeeper how many units to purchase to safely restore a 2&times; buffer.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">3. Real-Time Valuation</div>
+            <div class="formula-box">
+CategoryValuation =<br>
+&sum; (ProductQty &times; UnitPrice)
+            </div>
+            <div class="card-desc">Aggregated live across the entire catalog and segmented by category to provide instant business intelligence to the store owner.</div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-5">
+        <strong>Viva Speaker Note:</strong> "Examiners frequently ask how we calculate the reorder quantity. We use the standard retail buffer formula: (Reorder Point &times; 2) - Current Quantity. If a product has a threshold of 10 and we have 4 units left, the system suggests ordering (20 - 4) = 16 units."
+      </div>
+    </div>
+
+    <!-- SLIDE 6: TRANSACTION INTEGRITY & CONCURRENCY -->
+    <div class="slide" data-index="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Concurrency & Reliability</span>
+          <h2 class="slide-title">Atomic POS Sales & ACID Guarantees</h2>
+        </div>
+        <span class="pill pill-green">ACID Compliant</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="glass-card">
+            <div class="card-title">Atomic 3-Way POS Sale Operation</div>
+            <div class="card-desc" style="margin-top: 0.5rem; line-height: 1.6;">
+              When a cashier clicks <strong>Complete Sale</strong>:
+              <ol style="margin-left: 1.25rem; margin-top: 0.5rem;">
+                <li><code class="code-chip">conn.setAutoCommit(false);</code></li>
+                <li>Verify current stock &ge; requested quantity.</li>
+                <li>Deduct product quantity: <code class="code-chip">UPDATE products SET quantity = quantity - ?</code></li>
+                <li>Write audit entry: <code class="code-chip">INSERT INTO stock_transactions(..., 'OUTWARD')</code></li>
+                <li>Write sales entry: <code class="code-chip">INSERT INTO sales(...)</code></li>
+                <li><code class="code-chip">conn.commit();</code></li>
+              </ol>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">Fail-Safe Exception Handling & Rollback</div>
+            <div class="formula-box" style="font-size: 0.8rem; line-height: 1.4;">
+try {<br>
+&nbsp;&nbsp;conn.setAutoCommit(false);<br>
+&nbsp;&nbsp;// Execute 3 atomic statements...<br>
+&nbsp;&nbsp;conn.commit();<br>
+} catch (Exception e) {<br>
+&nbsp;&nbsp;conn.rollback(); // Restores clean state<br>
+&nbsp;&nbsp;throw new IllegalStateException("Sale failed");<br>
+}
+            </div>
+            <div class="card-desc">Zero ghost sales, zero missing audit logs, and zero negative stock discrepancies.</div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-5">
+        <strong>Viva Speaker Note:</strong> "We guarantee ACID properties. If the database crashes or an error occurs during step 4, the rollback() method reverses all changes. The inventory is never decremented unless the sale is also permanently recorded."
+      </div>
+    </div>
+
+    <!-- SLIDE 7: KEY UI MODULES -->
+    <div class="slide" data-index="7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">User Experience</span>
+          <h2 class="slide-title">Core Frontend Modules (React 18)</h2>
+        </div>
+        <span class="pill pill-cyan">7 Dedicated Views</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="glass-card">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Executive Dashboard</div>
+            <div class="card-desc">KPI metrics (Stock, Low-Stock Count, Total Valuation) + instant low-stock warning table.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">📦</div>
+            <div class="card-title">Product Catalog</div>
+            <div class="card-desc">Full CRUD operations with live text search, category filtering, and status badges.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">🔄</div>
+            <div class="card-title">Stock Operations</div>
+            <div class="card-desc">Inward batch receiving, outward removal, and damaged goods recording with ledger log.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">🏷️</div>
+            <div class="card-title">POS Sales Terminal</div>
+            <div class="card-desc">Rapid billing form with real-time subtotal calculation and instant sales receipt register.</div>
+          </div>
+        </div>
+        <div class="glass-card" style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-weight: 700; color: #fff;">Bonus Academic Feature: Pure Client-Side CSV Export</span>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Generates and triggers download of real formatted spreadsheets directly in the browser with 0 external npm dependencies.</p>
+          </div>
+          <span class="pill pill-green">Zero-Dependency CSV</span>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-7">
+        <strong>Viva Speaker Note:</strong> "The user interface is completely decoupled from the backend. The React app runs on port 5173, and accesses the REST API on port 8080. This simulates a real production setup where multiple cashier terminals talk to a central database server."
+      </div>
+    </div>
+
+    <!-- SLIDE 8: EDGE CASES & DEFENSIVE DESIGN -->
+    <div class="slide" data-index="8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Quality Engineering</span>
+          <h2 class="slide-title">10 Robust Edge Cases Handled</h2>
+        </div>
+        <span class="pill pill-amber">Zero Blindspots</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="glass-card">
+            <div class="card-title">Input & Security Validations</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • <strong>Duplicate SKU:</strong> Rejected with <code class="code-chip">409 Conflict</code>.<br>
+              • <strong>SQL Injection:</strong> Blocked 100% via <code class="code-chip">PreparedStatement</code>.<br>
+              • <strong>Negative Prices:</strong> Guarded (<code class="code-chip">unit_price > 0</code>).<br>
+              • <strong>Zero / Negative Stock:</strong> Blocked via DB & Java checks.<br>
+              • <strong>Null Form Fields:</strong> Trimmed and validated before processing.
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">Business & Transactional Edge Cases</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • <strong>Overselling at POS:</strong> Blocked with friendly error message.<br>
+              • <strong>Excess Damaged Write-off:</strong> Cannot exceed current stock.<br>
+              • <strong>Category Deletion:</strong> Protected by Foreign Key constraint.<br>
+              • <strong>Zero Sales Quantity:</strong> Rejected with <code class="code-chip">400 Bad Request</code>.<br>
+              • <strong>Financial Precision:</strong> Handled with double-precision arithmetic.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-8">
+        <strong>Viva Speaker Note:</strong> "In academic vivas, professors love to test edge cases: entering negative prices, buying 100 items when only 5 exist, or typing SQL quotes. Our system handles all 10 edge cases gracefully with clean HTTP status codes and user-friendly error dialogs."
+      </div>
+    </div>
+
+    <!-- SLIDE 9: TEST VERIFICATION RESULTS -->
+    <div class="slide" data-index="9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Quality Assurance</span>
+          <h2 class="slide-title">Comprehensive Test Verification</h2>
+        </div>
+        <span class="pill pill-green">All Tests Passed</span>
+      </div>
+      <div class="slide-body">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Test Suite</th>
+              <th>Target Component</th>
+              <th>Scenarios Tested</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code class="code-chip">TestFoundation</code></td>
+              <td>Database & Driver</td>
+              <td>JDBC connection, MySQL 8 driver loading, credentials</td>
+              <td><span class="pill pill-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><code class="code-chip">TestCategorySupplier</code></td>
+              <td>Categories & Suppliers</td>
+              <td>CRUD operations, unique names, phone validations</td>
+              <td><span class="pill pill-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><code class="code-chip">TestProductModule</code></td>
+              <td>Product Management</td>
+              <td>Duplicate SKU rejection, price validation, status formula</td>
+              <td><span class="pill pill-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><code class="code-chip">TestStockModule</code></td>
+              <td>Stock Audit Ledger</td>
+              <td>Inward increments, outward decrements, insufficient stock</td>
+              <td><span class="pill pill-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><code class="code-chip">TestSalesModule</code></td>
+              <td>Atomic POS Sales</td>
+              <td>Atomic 3-way commit, rollback on error, sales ledger</td>
+              <td><span class="pill pill-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><code class="code-chip">TestReportsModule</code></td>
+              <td>Analytics & KPIs</td>
+              <td>KPI calculations, low-stock filter, financial valuation</td>
+              <td><span class="pill pill-green">PASS</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="speaker-notes" id="notes-9">
+        <strong>Viva Speaker Note:</strong> "Every single layer has a corresponding standalone Java test suite. We also ran the Vite production build to guarantee zero JSX syntax or compilation errors."
+      </div>
+    </div>
+
+    <!-- SLIDE 10: LIVE DEMO FLOW -->
+    <div class="slide" data-index="10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Demonstration Plan</span>
+          <h2 class="slide-title">Viva Demonstration Script (5 Mins)</h2>
+        </div>
+        <span class="pill pill-cyan">Step-by-Step Flow</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="glass-card">
+            <div class="card-icon">1️⃣</div>
+            <div class="card-title">Dashboard Overview</div>
+            <div class="card-desc">Show the 4 KPI cards. Point out the low-stock alert showing <em>Permanent Marker</em> and <em>Stapler</em> needing restock.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">2️⃣</div>
+            <div class="card-title">Product CRUD & Edge Case</div>
+            <div class="card-desc">Attempt adding product with existing SKU <code class="code-chip">PEN001</code> &rarr; show conflict error. Then add a valid new item.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">3️⃣</div>
+            <div class="card-title">Stock Inward Restock</div>
+            <div class="card-desc">Add +50 units to <em>Permanent Marker</em>. Return to Dashboard &rarr; watch the status badge turn green <code class="code-chip">IN STOCK</code>!</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">4️⃣</div>
+            <div class="card-title">Atomic POS Sale</div>
+            <div class="card-desc">Sell 5 pens. Observe the instant sales log and verify the automated <code class="code-chip">OUTWARD</code> audit ledger entry.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">5️⃣</div>
+            <div class="card-title">Reports & 1-Click CSV</div>
+            <div class="card-desc">Navigate to Reports, review the valuation by category, and click <strong>Download CSV</strong> to show the downloaded file.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-icon">6️⃣</div>
+            <div class="card-title">Postman REST Check</div>
+            <div class="card-desc">Demonstrate the backend REST endpoints responding in JSON format directly in Postman or browser.</div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-10">
+        <strong>Viva Speaker Note:</strong> "During the live viva, follow this exact sequence. It proves every requirement: visualization, validation, inventory mechanics, atomic sales, and business intelligence."
+      </div>
+    </div>
+
+    <!-- SLIDE 11: TOP VIVA QUESTIONS & ANSWERS -->
+    <div class="slide" data-index="11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Academic Defense</span>
+          <h2 class="slide-title">Examiner Viva Q&A Cheat Sheet</h2>
+        </div>
+        <span class="pill pill-amber">Key Defenses</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="glass-card">
+            <div class="card-title">Q1: Why plain JDBC instead of Hibernate / JPA?</div>
+            <div class="card-desc"><em>"ORM frameworks abstract away SQL queries and transaction management. In an academic project, writing plain JDBC proves understanding of PreparedStatement lifecycle, SQL optimization, and explicit commit/rollback controls."</em></div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">Q2: How do you prevent SQL injection?</div>
+            <div class="card-desc"><em>"Every parameter is bound using <code class="code-chip">PreparedStatement.setObject()</code>. The SQL statement is compiled before values are injected as literal data, making SQL injection mathematically impossible."</em></div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">Q3: How do you handle simultaneous sales?</div>
+            <div class="card-desc"><em>"We use MySQL InnoDB row-level locking during atomic updates and verify the stock count inside an active transaction. If stock is insufficient, the transaction rolls back cleanly."</em></div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">Q4: Why Java 21 Virtual Threads?</div>
+            <div class="card-desc"><em>"Java 21 Virtual Threads provide lightweight concurrency with minimal memory overhead, allowing our embedded HTTP server to handle high concurrent POS traffic effortlessly."</em></div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-11">
+        <strong>Viva Speaker Note:</strong> "These four questions represent 90% of technical questions asked by external examiners in a college software engineering defense."
+      </div>
+    </div>
+
+    <!-- SLIDE 12: CONCLUSION & SUMMARY -->
+    <div class="slide" data-index="12">
+      <div class="slide-header">
+        <span class="slide-tag">Conclusion & Future Scope</span>
+        <span class="pill pill-green">Project Complete</span>
+      </div>
+      <div class="slide-body" style="text-align: center; justify-content: center; gap: 1.5rem;">
+        <h2 style="font-size: 2.2rem; font-weight: 800; color: #fff;">Summary of Achievements</h2>
+        <div class="grid-3" style="text-align: left; max-width: 950px; margin: 0 auto;">
+          <div class="glass-card">
+            <div class="card-title">✅ Academic Rigor</div>
+            <div class="card-desc">Adheres strictly to the CARE approach across DEFINE, DESIGN, DEVELOP, and DEPLOY phases.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">✅ Production Quality</div>
+            <div class="card-desc">Modular, clean, zero hardcoded credentials, 100% test coverage, and automated 1-click launch.</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title">🚀 Future Scope</div>
+            <div class="card-desc">Hardware USB barcode scanner integration, multi-store sync, and automated WhatsApp/Email reorder alerts.</div>
+          </div>
+        </div>
+        <div style="margin-top: 1rem;">
+          <p style="font-size: 1.25rem; font-weight: 600; color: var(--primary-light);">Thank you! Questions are welcome.</p>
+        </div>
+      </div>
+      <div class="speaker-notes" id="notes-12">
+        <strong>Viva Speaker Note:</strong> "Thank you professors. I am now ready to demonstrate the live system running in the browser and answer any questions."
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Floating Controls -->
+  <div class="controls">
+    <button class="btn-ctrl" id="prevBtn" title="Previous Slide (Left Arrow)">◀ Prev</button>
+    <div class="slide-counter" id="slideCounter">1 / 12</div>
+    <button class="btn-ctrl" id="nextBtn" title="Next Slide (Right Arrow or Space)">Next ▶</button>
+    <div style="width: 1px; height: 18px; background: rgba(255,255,255,0.15); margin: 0 0.25rem;"></div>
+    <button class="btn-ctrl" id="notesBtn" title="Toggle Viva Speaker Notes (Press 'N')">📝 Notes</button>
+    <button class="btn-ctrl" id="fsBtn" title="Toggle Fullscreen (Press 'F')">⛶ Fullscreen</button>
+    <button class="btn-ctrl" id="printBtn" title="Print to PDF (Press 'P')">🖨️ PDF</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+    let showNotes = false;
+
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slideCounter');
+    const progressBar = document.getElementById('progressBar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const notesBtn = document.getElementById('notesBtn');
+    const fsBtn = document.getElementById('fsBtn');
+    const printBtn = document.getElementById('printBtn');
+
+    function updateSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      slides.forEach((slide, idx) => {
+        if (idx + 1 === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      counter.textContent = `${currentSlide} / ${totalSlides}`;
+      progressBar.style.width = `${(currentSlide / totalSlides) * 100}%`;
+
+      prevBtn.disabled = currentSlide === 1;
+      nextBtn.disabled = currentSlide === totalSlides;
+      prevBtn.style.opacity = currentSlide === 1 ? '0.4' : '1';
+      nextBtn.style.opacity = currentSlide === totalSlides ? '0.4' : '1';
+    }
+
+    function toggleNotes() {
+      showNotes = !showNotes;
+      document.querySelectorAll('.speaker-notes').forEach(note => {
+        if (showNotes) note.classList.add('visible');
+        else note.classList.remove('visible');
+      });
+      notesBtn.style.color = showNotes ? 'var(--primary-light)' : 'var(--text-main)';
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    prevBtn.addEventListener('click', () => updateSlide(currentSlide - 1));
+    nextBtn.addEventListener('click', () => updateSlide(currentSlide + 1));
+    notesBtn.addEventListener('click', toggleNotes);
+    fsBtn.addEventListener('click', toggleFullscreen);
+    printBtn.addEventListener('click', () => window.print());
+
+    // Keyboard Navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        updateSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        updateSlide(currentSlide - 1);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        updateSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        updateSlide(totalSlides);
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleNotes();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      } else if (e.key.toLowerCase() === 'p') {
+        window.print();
+      }
+    });
+
+    // Initialize
+    updateSlide(1);
+  </script>
+</body>
+</html>

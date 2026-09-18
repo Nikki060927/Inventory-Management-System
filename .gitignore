@@ -1,0 +1,30 @@
+# Operating System Files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Java Build & Class Files
+backend/out/
+*.class
+*.jar
+!backend/lib/mysql-connector-j.jar
+
+# Frontend Dependencies & Build Output
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# IDE & Editor Configurations
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Environment & Private Configuration
+.env
+.env.local
+*.secret

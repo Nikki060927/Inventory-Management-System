@@ -1,0 +1,53 @@
+<mxfile host="app.diagrams.net" modified="2026-09-18T14:41:00.000Z" agent="Antigravity" version="21.0.0">
+  <diagram id="er-diagram" name="Entity Relationship Diagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Categories Entity -->
+        <mxCell id="ent_categories" value="categories&#xa;------------------------&#xa;PK category_id : INT&#xa;   category_name : VARCHAR(100) [UQ]" style="shape=swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fef3c7;strokeColor=#d97706;" vertex="1" parent="1">
+          <mxGeometry x="60" y="80" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Suppliers Entity -->
+        <mxCell id="ent_suppliers" value="suppliers&#xa;------------------------&#xa;PK supplier_id : INT&#xa;   supplier_name : VARCHAR(150)&#xa;   phone : VARCHAR(20)&#xa;   email : VARCHAR(100)&#xa;   address : TEXT&#xa;   status : ENUM" style="shape=swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fef3c7;strokeColor=#d97706;" vertex="1" parent="1">
+          <mxGeometry x="780" y="80" width="220" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Products Entity -->
+        <mxCell id="ent_products" value="products&#xa;---------------------------------------&#xa;PK product_id : INT&#xa;   product_name : VARCHAR(200)&#xa;   sku : VARCHAR(50) [UQ]&#xa;   barcode : VARCHAR(50) [UQ]&#xa;FK category_id : INT&#xa;FK supplier_id : INT&#xa;   unit_price : DECIMAL(10,2)&#xa;   quantity : INT&#xa;   reorder_point : INT&#xa;   bin_location : VARCHAR(50)&#xa;   created_at : TIMESTAMP&#xa;   updated_at : TIMESTAMP" style="shape=swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dbeafe;strokeColor=#2563eb;" vertex="1" parent="1">
+          <mxGeometry x="400" y="240" width="260" height="250" as="geometry" />
+        </mxCell>
+
+        <!-- Stock Transactions Entity -->
+        <mxCell id="ent_transactions" value="stock_transactions&#xa;---------------------------------------&#xa;PK transaction_id : INT&#xa;FK product_id : INT&#xa;   transaction_type : ENUM&#xa;   quantity : INT&#xa;   previous_quantity : INT&#xa;   new_quantity : INT&#xa;   transaction_date : TIMESTAMP&#xa;   remarks : VARCHAR(255)" style="shape=swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d1fae5;strokeColor=#059669;" vertex="1" parent="1">
+          <mxGeometry x="80" y="560" width="260" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Sales Entity -->
+        <mxCell id="ent_sales" value="sales&#xa;---------------------------------------&#xa;PK sale_id : INT&#xa;FK product_id : INT&#xa;   quantity_sold : INT&#xa;   unit_price : DECIMAL(10,2)&#xa;   total_amount : DECIMAL(10,2)&#xa;   sale_date : TIMESTAMP" style="shape=swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fee2e2;strokeColor=#dc2626;" vertex="1" parent="1">
+          <mxGeometry x="720" y="560" width="260" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Relationships -->
+        <mxCell id="rel1" value="1 : N (Classifies)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d97706;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="ent_categories" target="ent_products">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel2" value="1 : N (Supplies)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d97706;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="ent_suppliers" target="ent_products">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel3" value="1 : N (Audits Movement)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#059669;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ent_products" target="ent_transactions">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel4" value="1 : N (Records Sales)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#dc2626;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ent_products" target="ent_sales">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
