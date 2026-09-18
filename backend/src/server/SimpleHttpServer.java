@@ -39,6 +39,7 @@ public class SimpleHttpServer {
     public void start() throws IOException {
         server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/api", new ApiHandler());
+        server.createContext("/", new StaticFileHandler());
         server.setExecutor(java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()); // Java 21 Virtual Threads
         server.start();
         System.out.println("==================================================");
@@ -383,5 +384,56 @@ public class SimpleHttpServer {
     private String escapeJson(String raw) {
         if (raw == null) return "";
         return raw.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
+    }
+
+    // -------------------------------------------------------------
+    // STATIC FRONTEND FILE HANDLER
+    // -------------------------------------------------------------
+    private class StaticFileHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            String path = exchange.getRequestURI().getPath();
+            if (path.startsWith("/api")) {
+                // Ignore, handled by ApiHandler
+                return;
+            }
+
+            if (path.equals("/") || path.isEmpty()) {
+                path = "/index.html";
+            }
+
+            File baseDir = new File("frontend");
+            if (!baseDir.exists()) {
+                baseDir = new File("../frontend");
+            }
+
+            File file = new File(baseDir, path.startsWith("/") ? path.substring(1) : path);
+            if (!file.exists() || file.isDirectory()) {
+                String notFound = "<h1>404 Not Found</h1><p>Resource " + path + " not found.</p>";
+                exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+                exchange.sendResponseHeaders(404, notFound.getBytes(StandardCharsets.UTF_8).length);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(notFound.getBytes(StandardCharsets.UTF_8));
+                }
+                return;
+            }
+
+            String contentType = "text/plain";
+            if (path.endsWith(".html")) contentType = "text/html; charset=UTF-8";
+            else if (path.endsWith(".css")) contentType = "text/css; charset=UTF-8";
+            else if (path.endsWith(".js")) contentType = "application/javascript; charset=UTF-8";
+            else if (path.endsWith(".svg")) contentType = "image/svg+xml";
+            else if (path.endsWith(".png")) contentType = "image/png";
+            else if (path.endsWith(".ico")) contentType = "image/x-icon";
+            else if (path.endsWith(".json")) contentType = "application/json; charset=UTF-8";
+
+            exchange.getResponseHeaders().set("Content-Type", contentType);
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
+            exchange.sendResponseHeaders(200, bytes.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(bytes);
+            }
+        }
     }
 }
