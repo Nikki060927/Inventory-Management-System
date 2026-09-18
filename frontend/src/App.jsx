@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Categories from './pages/Categories';
@@ -12,7 +13,15 @@ import './App.css';
 
 export default function App() {
   const [activePage, setActivePage] = useState('dashboard');
-  const [userRole, setUserRole] = useState('ADMIN'); // 'ADMIN' or 'STAFF'
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('inventory_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = 'success') => {
@@ -21,6 +30,61 @@ export default function App() {
       setToast(null);
     }, 3500);
   };
+
+  const handleLogin = (user) => {
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('inventory_user', JSON.stringify(user));
+    } catch (e) {
+      console.warn('Could not save session to localStorage', e);
+    }
+    showToast(`Welcome back, ${user.name}!`, 'success');
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('inventory_user');
+    } catch (e) {
+      console.warn('Could not clear session', e);
+    }
+    showToast('Signed out successfully.', 'success');
+  };
+
+  const handleSetUserRole = (newRole) => {
+    if (!currentUser) return;
+    const updated = {
+      ...currentUser,
+      role: newRole,
+      name: newRole === 'ADMIN' ? 'Nikhila V (Store Admin)' : 'Zaid Basha (Store Staff)',
+    };
+    setCurrentUser(updated);
+    try {
+      localStorage.setItem('inventory_user', JSON.stringify(updated));
+    } catch (e) {
+      console.warn('Could not update role', e);
+    }
+    showToast(`Switched role to ${newRole}`, 'success');
+  };
+
+  // If not logged in, render the Login Screen
+  if (!currentUser) {
+    return (
+      <div className="app-login-container">
+        {toast && (
+          <div className="toast-container">
+            <div className={`toast ${toast.type === 'error' ? 'toast-error' : 'toast-success'}`}>
+              <span>{toast.type === 'error' ? '⚠️' : '✓'}</span>
+              <span>{toast.message}</span>
+            </div>
+          </div>
+        )}
+        <Login onLogin={handleLogin} showToast={showToast} />
+      </div>
+    );
+  }
+
+  const userRole = currentUser.role || 'ADMIN';
 
   const renderPage = () => {
     switch (activePage) {
@@ -67,7 +131,9 @@ export default function App() {
         <Navbar
           activePage={activePage}
           userRole={userRole}
-          setUserRole={setUserRole}
+          setUserRole={handleSetUserRole}
+          currentUser={currentUser}
+          onLogout={handleLogout}
         />
         <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           {renderPage()}
@@ -76,3 +142,4 @@ export default function App() {
     </div>
   );
 }
+
