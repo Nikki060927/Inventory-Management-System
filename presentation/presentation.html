@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Stationery Inventory - 20-Slide Academic Presentation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: TITLE SLIDE -->
+    <div class="slide active" data-slide="1">
+      <div class="slide-header">
+        <span class="slide-category">Academic Major Project Evaluation</span>
+        <span class="badge badge-green">2025 - 2026</span>
+      </div>
+      <div class="slide-body" style="text-align: center; justify-content: center; gap: 1.25rem;">
+        <div style="font-size: 3rem;">📚✏️📦</div>
+        <h1 style="font-size: 2.4rem; color: var(--primary-navy); font-weight: 800; line-height: 1.2;">
+          SMART STATIONERY<br>INVENTORY MANAGEMENT SYSTEM
+        </h1>
+        <p style="font-size: 1.15rem; color: var(--text-body); max-width: 800px; margin: 0 auto;">
+          A Robust 3-Tier Web Application Built with Core Java 21 LTS, Plain JDBC, MySQL 8.0, and Vanilla Web Technologies
+        </p>
+        <div class="card" style="max-width: 650px; margin: 0 auto; text-align: left; background: #eff6ff; border-color: #bfdbfe;">
+          <p style="font-size: 0.95rem; line-height: 1.6; color: #1e3a8a;">
+            <strong>Team ID:</strong> TEAM-FSD-04 &nbsp;|&nbsp; <strong>Department:</strong> Computer Science and Engineering<br>
+            <strong>Lead Architect:</strong> Nikhila V (Reg No: <strong>44731059</strong>)<br>
+            <strong>Backend &amp; DB Specialist:</strong> Zaid Basha (Reg No: <strong>44731049</strong>)<br>
+            <strong>Institution:</strong> Faculty of Engineering &amp; Technology &nbsp;|&nbsp; <strong>Academic Year:</strong> 2025 - 2026
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: INTRODUCTION -->
+    <div class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 2 / 20</span>
+          <h2 class="slide-title">Introduction &amp; Industry Domain Background</h2>
+        </div>
+        <span class="badge badge-blue">Domain Overview</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🏪 Stationery Retail Ecosystem</div>
+            <div class="card-desc">
+              Stationery retail stores operate on tight margins with high volume across hundreds of diverse SKUs—including ballpoint pens, gel pens, ruled notebooks, binders, highlighters, staplers, and adhesives. Items are purchased by students, educators, and enterprise offices on daily demand cycles.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">📦 Operational Realities</div>
+            <div class="card-desc">
+              Unlike grocery or apparel stores, stationery products have small physical footprints and low unit costs (₹10 to ₹100). Misplacement, damaged items, and unrecorded bulk shrinkage easily wipe out store profitability without disciplined inventory control.
+            </div>
+          </div>
+        </div>
+        <div class="card" style="background: #f0fdf4; border-color: #bbf7d0;">
+          <div class="card-title" style="color: #166534;">🎯 Purpose of this System</div>
+          <p class="card-desc">To introduce an affordable, transparent, and framework-free inventory and point-of-sale management system that small-to-medium stationery stores can deploy with zero licensing overhead.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: PROBLEM STATEMENT -->
+    <div class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 3 / 20</span>
+          <h2 class="slide-title">Problem Statement &amp; Real-World Inefficiencies</h2>
+        </div>
+        <span class="badge badge-amber">Core Pain Points</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">📝 Manual Register Bottlenecks</div>
+            <div class="card-desc">Traditional storekeepers record sales and incoming goods in paper notebooks. Handwritten entries lead to arithmetic errors and delayed stock verification.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">📉 Exam-Season Stock-Outs</div>
+            <div class="card-desc">Back-to-school and exam periods bring sudden 5× demand spikes. Without automated low-stock warnings, storekeepers run out of pens and notebooks, losing immediate revenue.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">⚠️ Untracked Shrinkage &amp; Damage</div>
+            <div class="card-desc">Dried-up marker ink, torn notebook bindings, and broken staplers are discarded informally without audit entries, distorting physical stock balance.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: EXISTING SYSTEM -->
+    <div class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 4 / 20</span>
+          <h2 class="slide-title">Existing System &amp; Inherent Bottlenecks</h2>
+        </div>
+        <span class="badge badge-amber">Legacy Limitations</span>
+      </div>
+      <div class="slide-body">
+        <table class="table-clean">
+          <thead>
+            <tr>
+              <th>Evaluation Parameter</th>
+              <th>Existing Legacy / Manual Process</th>
+              <th>Impact on Stationery Business</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Stock Tracking</strong></td>
+              <td>Physical manual counting done weekly or monthly</td>
+              <td>Inability to know exact stock quantities during customer checkout</td>
+            </tr>
+            <tr>
+              <td><strong>Reorder Decision</strong></td>
+              <td>Intuition and guesswork based on empty shelf space</td>
+              <td>Over-ordering dead stock or running completely out of popular SKUs</td>
+            </tr>
+            <tr>
+              <td><strong>Customer Checkout</strong></td>
+              <td>Manual paper bill receipt with hand calculation</td>
+              <td>Long student queues during rush morning hours and calculation mistakes</td>
+            </tr>
+            <tr>
+              <td><strong>Financial Audit</strong></td>
+              <td>Paper invoices stored in binders; no valuation sum</td>
+              <td>Owner cannot determine net inventory capital locked in the store</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: PROPOSED SYSTEM -->
+    <div class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 5 / 20</span>
+          <h2 class="slide-title">Proposed System: Centralized 3-Tier Architecture</h2>
+        </div>
+        <span class="badge badge-green">Engineered Solution</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card" style="border-top: 4px solid var(--primary-blue);">
+            <div class="card-title">1. Presentation Tier</div>
+            <div class="card-desc">
+              • Clean HTML5, CSS3, Vanilla JS<br>
+              • Real-time interactive master dashboard<br>
+              • Color-coded stock badges (Green / Amber / Red)<br>
+              • 1-Click client-side CSV spreadsheet export
+            </div>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--accent-green);">
+            <div class="card-title">2. Logic &amp; Business Tier</div>
+            <div class="card-desc">
+              • Core Java 21 LTS Standard Library<br>
+              • Built-in HttpServer with Virtual Threads<br>
+              • Atomic POS sales &amp; stock transaction services<br>
+              • Automated suggested reorder calculations
+            </div>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--accent-amber);">
+            <div class="card-title">3. Data Persistence Tier</div>
+            <div class="card-desc">
+              • MySQL Server 8.0 InnoDB Engine<br>
+              • Normalized 3NF Relational Tables<br>
+              • Raw JDBC PreparedStatement (100% SQLi proof)<br>
+              • Immutable transaction audit ledger
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: PROJECT OBJECTIVES -->
+    <div class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 6 / 20</span>
+          <h2 class="slide-title">Project Objectives (SMART Goals)</h2>
+        </div>
+        <span class="badge badge-blue">Academic Benchmarks</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🎯 Specific &amp; Measurable</div>
+            <div class="card-desc">
+              <ul>
+                <li><strong>Stock Accuracy:</strong> Maintain 100% synchronized stock counting between POS billing and warehouse shelves.</li>
+                <li><strong>Automated Reorder:</strong> Trigger low-stock warnings when `quantity <= reorder_point` and output exact purchase units.</li>
+                <li><strong>Zero Negative Inventory:</strong> Prevent overselling using strict database check constraints (`quantity >= 0`).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">⚡ Achievable, Relevant &amp; Time-bound</div>
+            <div class="card-desc">
+              <ul>
+                <li><strong>Explainable Architecture:</strong> Deliver pure Java SE and Vanilla JS with zero external framework abstractions for viva defense.</li>
+                <li><strong>Fast Response:</strong> Ensure all REST API calls respond in $< 30\text{ ms}$ on local execution.</li>
+                <li><strong>1-Click Startup:</strong> Execute full compilation and browser launch through an automated `run.bat` script.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: KEY FUNCTIONAL FEATURES -->
+    <div class="slide" data-slide="7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 7 / 20</span>
+          <h2 class="slide-title">Key Functional Features Implemented</h2>
+        </div>
+        <span class="badge badge-green">Feature Highlights</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card">
+            <div class="card-title">📊 Executive Dashboard</div>
+            <div class="card-desc">Live KPI cards for total items, total units, low-stock count, and financial valuation.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">📦 Product Catalog</div>
+            <div class="card-desc">Full CRUD operations with unique SKU validation, barcode indexing, and bin location tracking.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">🔄 Stock Operations</div>
+            <div class="card-desc">Record Inward deliveries, outward dispatches, and damaged write-offs with audit notes.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">🛒 Atomic POS Billing</div>
+            <div class="card-desc">Rapid customer checkout with live price calculations and atomic stock deductions.</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 0.5rem; background: #eff6ff;">
+          <div class="card-title">📥 1-Click Client-Side CSV Generator</div>
+          <p class="card-desc">Allows store managers to export category valuation and low-stock reorder sheets directly to `.csv` spreadsheet files with zero third-party dependencies.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: TECHNOLOGY STACK -->
+    <div class="slide" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 8 / 20</span>
+          <h2 class="slide-title">Technology Stack: Pure Core Fundamentals</h2>
+        </div>
+        <span class="badge badge-green">Strict SOP Compliance</span>
+      </div>
+      <div class="slide-body">
+        <table class="table-clean">
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Approved Technology</th>
+              <th>Design Rationale &amp; Viva Explainability</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Frontend</strong></td>
+              <td>HTML5, Vanilla CSS3, Vanilla JS (ES6+)</td>
+              <td>Clean academic light theme; uses native `fetch()` API and DOM manipulation. <strong>No React, Bootstrap, or Tailwind.</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Backend</strong></td>
+              <td>Core Java 21 LTS Standard Library</td>
+              <td>Built-in `com.sun.net.httpserver.HttpServer` with Virtual Threads. <strong>No Spring Boot, Spring MVC, or Node.js.</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Database</strong></td>
+              <td>MySQL Server 8.0+ (InnoDB)</td>
+              <td>3NF relational schema with ACID transaction controls and foreign key constraints. <strong>No MongoDB.</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Persistence</strong></td>
+              <td>Plain JDBC (`PreparedStatement`)</td>
+              <td>Direct SQL compilation ensures 100% SQL injection immunity and explicit commit/rollback transaction management.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: 3-TIER ARCHITECTURE & PORTS -->
+    <div class="slide" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 9 / 20</span>
+          <h2 class="slide-title">3-Tier System Architecture &amp; Multi-Port Flow</h2>
+        </div>
+        <span class="badge badge-blue">Network Topography</span>
+      </div>
+      <div class="slide-body">
+        <div class="code-box">
++---------------------------------------------------------------------------------------------------+
+|                                  3-TIER ARCHITECTURAL DATA FLOW                                   |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|   [Presentation Tier]                  [Application / Business Tier]      [Data Persistence Tier]  |
+|   HTML5 + CSS3 + JS (ES6+)      -->     Java SE (HttpServer / JDBC)  -->   MySQL Server 8.0        |
+|   Client Browser (Port 5500 / 8080)    Application Server (Port 8080)     Database Engine (Port 3306)
+|                                                                                                   |
++---------------------------------------------------------------------------------------------------+
+        </div>
+        <div class="grid-3" style="margin-top: 0.75rem;">
+          <div class="card">
+            <strong>Port :5500 / :8080</strong><br>
+            <span class="subtext">Client UI requests HTML/CSS/JS assets and executes asynchronous REST fetch() requests.</span>
+          </div>
+          <div class="card">
+            <strong>Port :8080</strong><br>
+            <span class="subtext">Java HttpServer dispatches requests to Services and DAOs using lightweight Virtual Threads.</span>
+          </div>
+          <div class="card">
+            <strong>Port :3306</strong><br>
+            <span class="subtext">MySQL Server executes parameterized PreparedStatement queries under strict ACID isolation.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: APPLICATION MODULES -->
+    <div class="slide" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 10 / 20</span>
+          <h2 class="slide-title">Application Modules Breakdown</h2>
+        </div>
+        <span class="badge badge-blue">System Modules</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">1. Dashboard &amp; Alerts</div>
+            <div class="card-desc">Aggregates real-time metrics and renders the urgent low-stock reorder table showing items requiring purchase.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">2. Product Catalog</div>
+            <div class="card-desc">Manages product specifications, unique SKUs, barcode mappings, unit pricing, and shelf bin coordinates.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">3. Categories &amp; Suppliers</div>
+            <div class="card-desc">Maintains master reference data for stationery categories and vendor contact details.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">4. Stock Movement Ledger</div>
+            <div class="card-desc">Append-only audit ledger recording INWARD shipments, OUTWARD dispatches, and DAMAGED write-offs.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">5. POS Sales Billing</div>
+            <div class="card-desc">Rapid student checkout interface calculating subtotals and atomic inventory decrements.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">6. Valuation &amp; CSV</div>
+            <div class="card-desc">Calculates inventory assets by category and generates downloadable spreadsheet reports.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: DATABASE DESIGN -->
+    <div class="slide" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 11 / 20</span>
+          <h2 class="slide-title">Database Design: 5 Normalized Tables (3NF)</h2>
+        </div>
+        <span class="badge badge-green">3NF Data Model</span>
+      </div>
+      <div class="slide-body">
+        <table class="table-clean">
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Primary Key</th>
+              <th>Foreign Keys</th>
+              <th>Integrity Rules &amp; Constraints</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>categories</strong></td>
+              <td>`category_id`</td>
+              <td>None</td>
+              <td>`category_name` VARCHAR(100) UNIQUE NOT NULL</td>
+            </tr>
+            <tr>
+              <td><strong>suppliers</strong></td>
+              <td>`supplier_id`</td>
+              <td>None</td>
+              <td>Stores vendor contact, phone, email, and warehouse address</td>
+            </tr>
+            <tr>
+              <td><strong>products</strong></td>
+              <td>`product_id`</td>
+              <td>`category_id`, `supplier_id`</td>
+              <td>`sku` UNIQUE NOT NULL; `unit_price > 0`; `CHECK (quantity >= 0)`</td>
+            </tr>
+            <tr>
+              <td><strong>stock_transactions</strong></td>
+              <td>`transaction_id`</td>
+              <td>`product_id`</td>
+              <td>ENUM: 'INWARD', 'OUTWARD', 'DAMAGED'; immutable audit trail</td>
+            </tr>
+            <tr>
+              <td><strong>sales</strong></td>
+              <td>`sale_id`</td>
+              <td>`product_id`</td>
+              <td>`quantity_sold > 0`; auto timestamp; total price calculation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: DFD LEVEL 0 & 1 -->
+    <div class="slide" data-slide="12">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 12 / 20</span>
+          <h2 class="slide-title">Data Flow Diagrams (Level 0 &amp; Level 1)</h2>
+        </div>
+        <span class="badge badge-blue">Process Modeling</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">DFD Level 0 (Context Level)</div>
+            <div class="card-desc">
+              The external entity (Store Manager / Cashier) interacts with the centralized system boundary by transmitting:
+              <ul>
+                <li>Product creation, stock adjustments, and sales requests.</li>
+                <li>Receives KPI metrics, low-stock warnings, and CSV exports.</li>
+                <li>System communicates with MySQL via JDBC PreparedStatement.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">DFD Level 1 (Process Decomposition)</div>
+            <div class="card-desc">
+              Decomposes into 4 discrete functional processes:
+              <ul>
+                <li><strong>1.0 Product Management:</strong> Validates SKU uniqueness into `products`.</li>
+                <li><strong>2.0 Stock Audit:</strong> Updates stock counts into `stock_transactions`.</li>
+                <li><strong>3.0 POS Sales:</strong> Executes atomic sales checkout into `sales`.</li>
+                <li><strong>4.0 Analytics Engine:</strong> Computes thresholds and valuations.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: END-TO-END USER JOURNEY -->
+    <div class="slide" data-slide="13">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 13 / 20</span>
+          <h2 class="slide-title">End-to-End User Journey / Workflow</h2>
+        </div>
+        <span class="badge badge-green">Operational Workflow</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">1. Product Intake</div>
+            <div class="card-desc">Manager registers new stationery items with SKU, unit price, category, supplier, and safety reorder point.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">2. Inward Delivery</div>
+            <div class="card-desc">Supplier shipment arrives; storekeeper records INWARD quantity (+50 units). Stock updates and status turns Green.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">3. POS Customer Sale</div>
+            <div class="card-desc">Student purchases 5 pens; cashier bills the item; stock automatically decrements and an audit record logs.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">4. Threshold Breach</div>
+            <div class="card-desc">When sales drop stock to $\le 10$ units, system immediately transitions badge to Amber `LOW STOCK`.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">5. Reorder Formula</div>
+            <div class="card-desc">Dashboard computes exact suggested replenishment units: $(\text{Reorder Point} \times 2) - \text{Quantity}$.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">6. 1-Click CSV Export</div>
+            <div class="card-desc">Store owner exports the purchase list to Excel/CSV and sends purchase orders to suppliers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: FRONTEND INTERFACE -->
+    <div class="slide" data-slide="14">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 14 / 20</span>
+          <h2 class="slide-title">Frontend Interface, Forms &amp; Responsive Views</h2>
+        </div>
+        <span class="badge badge-blue">UI Engineering</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Semantic Layout &amp; Responsive Structure</div>
+            <div class="card-desc">
+              Built strictly using HTML5 semantic elements (`header`, `nav`, `main`, `section`). The layout adapts fluidly between desktop terminals and tablets using CSS Grid and Flexbox with zero framework bloat.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Accessible Forms &amp; Modal Dialogs</div>
+            <div class="card-desc">
+              Modal dialogs feature clear form labels, required attribute validations, positive price constraints, and instant toast notifications providing visual feedback for every user action.
+            </div>
+          </div>
+        </div>
+        <div class="card" style="background: #f8fafc;">
+          <div class="card-title">Pure Asynchronous Fetch Client</div>
+          <p class="card-desc">All UI data tables are updated dynamically via `fetch()` without full page reloads. Search input implements 250ms debouncing to minimize backend query frequency.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: JAVA BACKEND ENGINE -->
+    <div class="slide" data-slide="15">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 15 / 20</span>
+          <h2 class="slide-title">Java Backend Engine: Controller / Service / DAO</h2>
+        </div>
+        <span class="badge badge-green">Server Engineering</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">1. Controller / Server</div>
+            <div class="card-desc">
+              `SimpleHttpServer.java` registers routing endpoints, parses query strings and JSON payloads, sets CORS headers, and dispatches via Java 21 Virtual Threads.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">2. Service Layer</div>
+            <div class="card-desc">
+              `ProductService`, `StockService`, `SaleService` enforce business validations (non-negative stock, positive prices) and orchestrate atomic transaction boundaries.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">3. DAO Layer</div>
+            <div class="card-desc">
+              Data Access Objects (`ProductDAO`, `SaleDAO`, etc.) execute parameterized SQL queries via `PreparedStatement` and map relational `ResultSet` records to POJOs.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: DATABASE CRUD & JDBC -->
+    <div class="slide" data-slide="16">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 16 / 20</span>
+          <h2 class="slide-title">Database CRUD Operations &amp; Parameterized JDBC</h2>
+        </div>
+        <span class="badge badge-amber">SQL Security</span>
+      </div>
+      <div class="slide-body">
+        <div class="code-box">
+// 100% Parameterized Plain JDBC PreparedStatement (Zero SQL Injection)
+String sql = "UPDATE products SET quantity = quantity - ? WHERE product_id = ? AND quantity >= ?";
+try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+    stmt.setInt(1, quantitySold);
+    stmt.setInt(2, productId);
+    stmt.setInt(3, quantitySold);
+    int updatedRows = stmt.executeUpdate();
+    if (updatedRows == 0) {
+        throw new IllegalStateException("Insufficient stock or concurrency conflict!");
+    }
+}
+        </div>
+        <div class="grid-2" style="margin-top: 0.5rem;">
+          <div class="card">
+            <div class="card-title">🛡️ SQL Injection Immunity</div>
+            <div class="card-desc">Every query binds parameters as data literals (`?`). The SQL syntax is pre-compiled by MySQL, completely neutralizing injection vectors.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">🔒 ACID Transaction Control</div>
+            <div class="card-desc">Sales transactions invoke `conn.setAutoCommit(false)`, update stock, log audit records, and execute `conn.commit()`. On error, `conn.rollback()` restores clean state.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 17: ACCEPTANCE TESTING -->
+    <div class="slide" data-slide="17">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 17 / 20</span>
+          <h2 class="slide-title">Acceptance Criteria Verification &amp; Test Results</h2>
+        </div>
+        <span class="badge badge-green">100% Tests Passed</span>
+      </div>
+      <div class="slide-body">
+        <table class="table-clean">
+          <thead>
+            <tr>
+              <th>Test ID</th>
+              <th>Feature / Scenario</th>
+              <th>Input &amp; Conditions</th>
+              <th>Observed Result</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>TC-01</strong></td>
+              <td>Database Foundation</td>
+              <td>Verify MySQL connection on port 3306</td>
+              <td>Driver loaded, connection verified</td>
+              <td><span class="badge badge-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>TC-02</strong></td>
+              <td>Duplicate SKU Guard</td>
+              <td>Submit existing SKU `PEN001`</td>
+              <td>HTTP 409 Conflict returned</td>
+              <td><span class="badge badge-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>TC-03</strong></td>
+              <td>Overselling Guard</td>
+              <td>Sell 100 units with only 6 in stock</td>
+              <td>Transaction aborted; stock remains 6</td>
+              <td><span class="badge badge-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>TC-04</strong></td>
+              <td>Low Stock Formula</td>
+              <td>`qty = 8`, `reorder = 15`</td>
+              <td>Status `LOW STOCK`; Reorder: +22 units</td>
+              <td><span class="badge badge-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>TC-05</strong></td>
+              <td>Atomic POS Sale</td>
+              <td>Sell 5 pens @ ₹10</td>
+              <td>Stock decrements by 5; audit ledger updated</td>
+              <td><span class="badge badge-green">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>TC-06</strong></td>
+              <td>1-Click CSV Export</td>
+              <td>Click "Export CSV"</td>
+              <td>Formatted `.csv` file downloaded cleanly</td>
+              <td><span class="badge badge-green">PASS</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 18: LIVE RESULTS & DASHBOARD -->
+    <div class="slide" data-slide="18">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 18 / 20</span>
+          <h2 class="slide-title">Live Working Results &amp; Dashboard UI Representation</h2>
+        </div>
+        <span class="badge badge-green">System Live (:8080)</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card" style="text-align: center; border-top: 3px solid var(--primary-blue);">
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--primary-navy);">5 Items</div>
+            <div class="subtext">Active Stationery SKUs</div>
+          </div>
+          <div class="card" style="text-align: center; border-top: 3px solid var(--accent-green);">
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent-green);">229 Units</div>
+            <div class="subtext">Total Physical Stock</div>
+          </div>
+          <div class="card" style="text-align: center; border-top: 3px solid var(--accent-amber);">
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent-amber);">2 Alerts</div>
+            <div class="subtext">Low Stock Warning Items</div>
+          </div>
+          <div class="card" style="text-align: center; border-top: 3px solid #8b5cf6;">
+            <div style="font-size: 1.75rem; font-weight: 800; color: #8b5cf6;">₹4,770.00</div>
+            <div class="subtext">Total Inventory Capital</div>
+          </div>
+        </div>
+        <div class="card" style="background: #f0fdf4; border-color: #bbf7d0; margin-top: 0.5rem;">
+          <div class="card-title" style="color: #166534;">✅ Fully Functional Local Verification</div>
+          <p class="card-desc">The application is running live on `http://localhost:8080/`. The evaluator can inspect live stock levels, perform real-time checkouts, and verify instant database synchronization.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 19: FUTURE ENHANCEMENTS -->
+    <div class="slide" data-slide="19">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 19 / 20</span>
+          <h2 class="slide-title">Future Enhancements &amp; Scalability Roadmap</h2>
+        </div>
+        <span class="badge badge-blue">Roadmap</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">1. Hardware Barcode Integration</div>
+            <div class="card-desc">Integrate USB / Bluetooth handheld 1D/2D barcode scanners for lightning-fast student checkout without manual typing.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">2. Automated Vendor Dispatch</div>
+            <div class="card-desc">Automatically trigger email or WhatsApp purchase order notifications to suppliers whenever items breach reorder thresholds.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">3. Multi-Branch Cloud Sync</div>
+            <div class="card-desc">Expand architecture to synchronize stock levels across multiple stationery branch stores near college campuses.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 20: CONCLUSION & VIVA Q&A -->
+    <div class="slide" data-slide="20">
+      <div class="slide-header">
+        <div>
+          <span class="slide-category">Slide 20 / 20</span>
+          <h2 class="slide-title">Conclusion, Summary of Learnings &amp; Viva Q&amp;A</h2>
+        </div>
+        <span class="badge badge-green">Project Complete</span>
+      </div>
+      <div class="slide-body" style="text-align: center; justify-content: center; gap: 1rem;">
+        <h3 style="font-size: 1.6rem; color: var(--primary-navy);">Key Academic Learnings</h3>
+        <div class="grid-3" style="text-align: left; max-width: 950px; margin: 0 auto;">
+          <div class="card">
+            <div class="card-title">Mastery Over Core Java</div>
+            <div class="card-desc">Learned how to construct high-performance REST servers and virtual thread dispatchers without Spring Boot.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Relational Integrity</div>
+            <div class="card-desc">Implemented strict ACID transactions, row-level locking, and immutable audit ledgers in MySQL.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Vanilla Frontend Efficiency</div>
+            <div class="card-desc">Built a clean, fast, and responsive user interface using pure HTML5, CSS3, and modern ES6+ JavaScript.</div>
+          </div>
+        </div>
+        <p style="font-size: 1.2rem; font-weight: 700; color: var(--primary-blue); margin-top: 0.5rem;">
+          Thank you! We are now ready for the Live Demonstration &amp; Viva Q&amp;A.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- On-Screen Navigation Controls -->
+  <div class="controls-bar">
+    <button class="btn-nav" id="btnPrev" title="Previous Slide (Arrow Left)">← Prev</button>
+    <span class="counter-text" id="slideCounter">Slide 1 / 20</span>
+    <button class="btn-nav" id="btnNext" title="Next Slide (Arrow Right or Space)">Next →</button>
+  </div>
+
+  <!-- Presentation Navigation Script -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 20;
+
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slideCounter');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      slides.forEach((slide, idx) => {
+        if (idx + 1 === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      counter.textContent = `Slide ${currentSlide} / ${totalSlides}`;
+      btnPrev.disabled = currentSlide === 1;
+      btnNext.disabled = currentSlide === totalSlides;
+      btnPrev.style.opacity = currentSlide === 1 ? '0.4' : '1';
+      btnNext.style.opacity = currentSlide === totalSlides ? '0.4' : '1';
+    }
+
+    btnPrev.addEventListener('click', () => showSlide(currentSlide - 1));
+    btnNext.addEventListener('click', () => showSlide(currentSlide + 1));
+
+    // Keyboard Controls
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        showSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        showSlide(currentSlide - 1);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        showSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        showSlide(totalSlides);
+      }
+    });
+
+    // Initialize
+    showSlide(1);
+  </script>
+</body>
+</html>
