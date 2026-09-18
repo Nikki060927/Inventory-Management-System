@@ -39,25 +39,33 @@ cd ..
 echo.
 
 :: 3. Launch Java HttpServer on port 8080
-echo [3/3] Starting Java HttpServer & REST API on Port 8080...
-start "Smart Stationery - Server & Application (:8080)" cmd /k "cd backend && java -cp bin;lib/mysql-connector-j.jar Main"
+echo [3/4] Starting Java HttpServer & REST API on Port 8080...
+start "Smart Stationery - Backend REST API (:8080)" cmd /k "cd backend && java -cp bin;lib/mysql-connector-j.jar Main"
 
 :: Brief wait for server socket binding
 timeout /t 3 >nul
 
-:: 4. Open Web Application and 20-Slide Presentation
-echo [OK] Launching Application and 20-Slide Presentation...
-start http://localhost:8080/index.html
+:: 4. Launch React Frontend on port 5173
+echo [4/4] Starting React Frontend Dev Server on http://127.0.0.1:5173/ ...
+start "Smart Stationery - React Frontend (:5173)" cmd /k "cd frontend && npm run dev -- --host 127.0.0.1 --port 5173"
+
+:: Brief wait for Vite server binding
+timeout /t 2 >nul
+
+:: 5. Open React Application and 20-Slide Presentation
+echo [OK] Launching React Application and 20-Slide Presentation...
+start http://127.0.0.1:5173/
 start "" "%~dp0presentation\presentation.html"
 
 echo.
 echo ======================================================================
 echo  SYSTEM IS LIVE AND RUNNING!
 echo  ------------------------------------------------------------------
-echo  * Web Application:     http://localhost:8080/index.html
-echo  * REST API Base URL:   http://localhost:8080/api
-echo  * 20-Slide Web Deck:   presentation/presentation.html
-echo  * Academic Runbook:    docs/Student_FullStack_Project_Runbook.xlsx
+echo  * React Web App:        http://127.0.0.1:5173/
+echo  * REST API Base URL:    http://localhost:8080/api
+echo  * 20-Slide Web Deck:    presentation/presentation.html
+echo  * Academic Runbook:     docs/Student_FullStack_Project_Runbook.xlsx
 echo ======================================================================
 echo.
 pause
+
