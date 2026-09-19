@@ -19,26 +19,25 @@ The system is architected with strict separation of concerns using **Core Java 2
 - **Search & Multi-Criteria Filtering:** Live keyword search (by Name, SKU, or Barcode), category dropdown filter, stock status filter, sorting, and pagination.
 
 ### 🔄 Stock Operations & Immutable Audit Ledger
-- **Stock Inward:** Log vendor restock deliveries with invoice remarks:
-  $$\text{New Stock} = \text{Current Stock} + \text{Inward Quantity}$$
-- **Stock Outward:** Record store usage or branch dispatches:
-  $$\text{New Stock} = \text{Current Stock} - \text{Outward Quantity}$$
+- **Stock Inward:** Log vendor restock deliveries with invoice remarks:  
+  `New Stock = Current Stock + Inward Quantity`
+- **Stock Outward:** Record store usage or branch dispatches:  
+  `New Stock = Current Stock - Outward Quantity`
 - **Damaged Stock:** Record defective or shop-soiled items with mandatory damage reasons.
 - **Negative Stock Prevention:** The system atomically rejects any outward or damaged stock operation where requested quantity exceeds available stock.
 - **Complete Movement History:** Non-repudiable audit ledger capturing `previous_quantity`, `quantity` delta, `new_quantity`, timestamp, and remarks for every transaction.
 
 ### 🛒 Point of Sale (POS) Billing
 - Fast cashier interface: Select product, see live on-shelf stock, enter quantity, and view auto-calculated bill totals.
-- Atomic 3-way transactional commit:
-  $$\text{Deduct Product Stock} \Longleftrightarrow \text{Create Sale Record} \Longleftrightarrow \text{Log OUTWARD Stock Audit}$$
+- **Atomic 3-Way Transactional Commit:** `Deduct Product Stock` ↔ `Create Sale Record` ↔ `Log OUTWARD Stock Audit` (all succeed together or rollback completely).
 - Over-selling protection: Rejects purchases exceeding available stock.
 
 ### 🧠 Smart Inventory Features
-1. **Low Stock Alerting:** Automatically flags items when $\text{quantity} \le \text{reorder\_point}$ and displays an amber warning badge.
-2. **Out of Stock Alerting:** Prominently highlights items with $\text{quantity} = 0$ in red.
-3. **Algorithmic Reorder Suggestion:** Calculates recommended purchase quantities to avoid over-ordering or stockouts:
-   $$\text{Suggested Reorder Quantity} = (\text{reorder\_point} \times 2) - \text{current\_quantity}$$
-4. **Real-Time Financial Valuation:** Computes total capital tied up in stock ($\text{unit\_price} \times \text{quantity}$) store-wide, category-wise, and product-wise.
+1. **Low Stock Alerting:** Automatically flags items when `quantity <= reorder_point` and displays an amber warning badge.
+2. **Out of Stock Alerting:** Prominently highlights items with `quantity == 0` in red.
+3. **Algorithmic Reorder Suggestion:** Calculates recommended purchase quantities to avoid over-ordering or stockouts:  
+   `Suggested Reorder Quantity = (reorder_point * 2) - current_quantity`
+4. **Real-Time Financial Valuation:** Computes total capital tied up in stock (`unit_price * quantity`) store-wide, category-wise, and product-wise.
 5. **1-Click CSV Data Export:** Export product catalogs, low-stock lists, valuation breakdowns, and audit trails directly into CSV files.
 6. **Role Switcher (Academic Demo):** Interactive toggle between **Store Admin** (full CRUD) and **Store Staff** (restricted operational access).
 
@@ -54,7 +53,7 @@ The system is architected with strict separation of concerns using **Core Java 2
 | **Data Access** | JDBC (Java Database Connectivity) | Parameterized `PreparedStatement`, manual connection pooling, explicit transaction boundaries. |
 | **Database** | MySQL 8.0 / InnoDB | Relational integrity, ACID compliance, foreign key cascade/restrictions, check constraints. |
 | **Driver** | MySQL Connector/J 9.x | Official Type 4 JDBC driver. |
-| **Architecture** | 3-Tier Architecture | Presentation (React) $\rightarrow$ Application (Java 21 REST) $\rightarrow$ Data (MySQL 8.0). |
+| **Architecture** | 3-Tier Architecture | Presentation (React) → Application (Java 21 REST) → Data (MySQL 8.0). |
 
 ---
 
@@ -282,12 +281,12 @@ Frontend opens at: `http://127.0.0.1:5173/`
 
 ### Method C: Running the Backend in IntelliJ IDEA
 1. Open **IntelliJ IDEA**.
-2. Click **Open** $\rightarrow$ Navigate to `smart-stationery-inventory/backend`.
-3. Open **File** $\rightarrow$ **Project Structure** $\rightarrow$ **Project**:
+2. Click **Open** → Navigate to `smart-stationery-inventory/backend`.
+3. Open **File** → **Project Structure** → **Project**:
    - Set **SDK** to **21**.
-4. In **Project Structure** $\rightarrow$ **Libraries**:
-   - Click **+** (Java) $\rightarrow$ select `backend/lib/mysql-connector-j.jar` $\rightarrow$ Apply.
-5. In **Project Structure** $\rightarrow$ **Modules**:
+4. In **Project Structure** → **Libraries**:
+   - Click **+** (Java) → select `backend/lib/mysql-connector-j.jar` → Apply.
+5. In **Project Structure** → **Modules**:
    - Ensure the `src` folder is marked as **Sources Root**.
 6. Open `src/Main.java` and click the green **Run** icon.
 
@@ -322,14 +321,14 @@ java -ea -cp "out;lib/mysql-connector-j.jar" TestReportsModule
 | :--- | :--- | :--- | :--- |
 | **EC-1: Duplicate SKU** | Attempting to create product with existing SKU (e.g. `PEN001`) | Throws `IllegalArgumentException("SKU already exists")` | ✅ Passed |
 | **EC-2: Duplicate Barcode** | Attempting to insert existing barcode | Throws `IllegalArgumentException("Barcode already exists")` | ✅ Passed |
-| **EC-3: Negative Quantity** | Entering stock quantity $< 0$ | Throws `IllegalArgumentException("Quantity cannot be negative")` | ✅ Passed |
-| **EC-4: Insufficient Stock** | Attempting outward dispatch $> \text{available stock}$ | Operation rejected, stock unmodified, no audit record logged | ✅ Passed |
-| **EC-5: Low Stock Detection** | Current stock $\le$ reorder point | Displayed as `LOW STOCK`; suggested order computed | ✅ Passed |
-| **EC-6: Out of Stock** | Current stock reaches $0$ | Highlighted as `OUT OF STOCK` | ✅ Passed |
+| **EC-3: Negative Quantity** | Entering stock quantity `< 0` | Throws `IllegalArgumentException("Quantity cannot be negative")` | ✅ Passed |
+| **EC-4: Insufficient Stock** | Attempting outward dispatch `> available stock` | Operation rejected, stock unmodified, no audit record logged | ✅ Passed |
+| **EC-5: Low Stock Detection** | Current stock `<= reorder_point` | Displayed as `LOW STOCK`; suggested order computed | ✅ Passed |
+| **EC-6: Out of Stock** | Current stock reaches `0` | Highlighted as `OUT OF STOCK` | ✅ Passed |
 | **EC-7: Damaged Goods** | Logging damaged goods without remarks | Blocked; damage reason is mandatory | ✅ Passed |
-| **EC-8: Invalid Price** | Unit price $\le 0$ | Blocked; price must be strictly $> 0$ | ✅ Passed |
+| **EC-8: Invalid Price** | Unit price `<= 0` | Blocked; price must be strictly `> 0` | ✅ Passed |
 | **EC-9: Empty Product Name** | Empty product name input | Blocked; product name is required | ✅ Passed |
-| **EC-10: Over-Selling** | Sale quantity sold $>$ available stock | Blocked with HTTP 400 Insufficient Stock error | ✅ Passed |
+| **EC-10: Over-Selling** | Sale quantity sold `> available stock` | Blocked with HTTP 400 Insufficient Stock error | ✅ Passed |
 
 ---
 
@@ -357,7 +356,7 @@ Import the collection located at:
 
 #### Q3: How do you prevent negative stock when multiple sales or outward dispatches occur?
 **Answer:** Two layers of protection are enforced:
-1. **Service Layer:** In `StockService` and `SaleService`, we verify that $\text{requested\_quantity} \le \text{current\_quantity}$. If insufficient, an exception is thrown immediately.
+1. **Service Layer:** In `StockService` and `SaleService`, we verify that `requested_quantity <= current_quantity`. If insufficient, an exception is thrown immediately.
 2. **Database Layer:** The `products` table has a hard constraint: `CHECK (quantity >= 0)`. Any operation causing negative stock is rejected by the MySQL InnoDB engine.
 
 #### Q4: How is atomicity guaranteed in Point of Sale (POS) operations?
@@ -373,8 +372,8 @@ conn.commit();
 If any of the three operations fails, `conn.rollback()` restores the original state, ensuring no partial writes occur.
 
 #### Q5: How is the suggested reorder quantity calculated?
-**Answer:** When an item's stock drops to or below its reorder point, the system computes:
-$$\text{Suggested Reorder Quantity} = (\text{reorder\_point} \times 2) - \text{current\_quantity}$$
+**Answer:** When an item's stock drops to or below its reorder point, the system computes:  
+`Suggested Reorder Quantity = (reorder_point * 2) - current_quantity`  
 This replenishes inventory to twice the safety stock level without over-purchasing.
 
 ---
