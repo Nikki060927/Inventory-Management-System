@@ -262,17 +262,28 @@ public class SimpleHttpServer {
     }
 
     // -------------------------------------------------------------
-    // SALES ENDPOINTS
+    // SALES & MULTI-COMMODITY BILLING ENDPOINTS
     // -------------------------------------------------------------
     private void handleSales(HttpExchange ex, String method, String path) throws Exception {
         if ("GET".equals(method)) {
             sendJson(ex, 200, JsonUtil.toJson(saleService.getAllSales()));
         } else if ("POST".equals(method)) {
-            Map<String, String> m = JsonUtil.parse(readBody(ex));
-            int productId = parseInt(m.get("productId"), "Product ID");
-            int quantitySold = parseInt(m.get("quantitySold"), "Quantity Sold");
-            Sale sale = saleService.recordSale(productId, quantitySold);
-            sendJson(ex, 201, JsonUtil.toJson(sale));
+            String body = readBody(ex);
+            JsonUtil.BillRequest req = JsonUtil.parseBillRequest(body);
+
+            if (req.items == null || req.items.isEmpty()) {
+                sendError(ex, 400, "Validation failed: No commodities specified for bill generation.");
+                return;
+            }
+
+            model.SaleBill bill = saleService.recordBill(req.items, req.customerName, req.paymentMethod);
+
+            // Backward compatibility: If client sent single item without items array, return Sale object
+            if (req.items.size() == 1 && !body.contains("\"items\"")) {
+                sendJson(ex, 201, JsonUtil.toJson(bill.getItems().get(0)));
+            } else {
+                sendJson(ex, 201, JsonUtil.toJson(bill));
+            }
         } else {
             sendError(ex, 405, "Method Not Allowed");
         }

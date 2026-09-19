@@ -138,6 +138,80 @@ public class JsonUtil {
         map.put(k, v);
     }
 
+    public static class BillRequest {
+        public String customerName = "Walk-in Customer";
+        public String paymentMethod = "Cash";
+        public List<SaleItemRequest> items = new ArrayList<>();
+    }
+
+    public static class SaleItemRequest {
+        public int productId;
+        public int quantitySold;
+
+        public SaleItemRequest() {}
+        public SaleItemRequest(int productId, int quantitySold) {
+            this.productId = productId;
+            this.quantitySold = quantitySold;
+        }
+    }
+
+    /**
+     * Parses a multi-commodity bill request JSON containing an array of items,
+     * customer details, and payment method, or falls back to single-product sale format.
+     */
+    public static BillRequest parseBillRequest(String json) {
+        BillRequest req = new BillRequest();
+        if (json == null || json.trim().isEmpty()) return req;
+
+        // Customer Name
+        java.util.regex.Matcher mCust = java.util.regex.Pattern.compile("\"customerName\"\\s*:\\s*\"([^\"]*)\"").matcher(json);
+        if (mCust.find() && !mCust.group(1).trim().isEmpty()) {
+            req.customerName = mCust.group(1).trim();
+        }
+
+        // Payment Method
+        java.util.regex.Matcher mPay = java.util.regex.Pattern.compile("\"paymentMethod\"\\s*:\\s*\"([^\"]*)\"").matcher(json);
+        if (mPay.find() && !mPay.group(1).trim().isEmpty()) {
+            req.paymentMethod = mPay.group(1).trim();
+        }
+
+        // Multi-commodity items array: "items": [ { ... }, { ... } ]
+        int itemsIdx = json.indexOf("\"items\"");
+        if (itemsIdx != -1) {
+            int openBracket = json.indexOf('[', itemsIdx);
+            int closeBracket = json.lastIndexOf(']');
+            if (openBracket != -1 && closeBracket > openBracket) {
+                String arrayContent = json.substring(openBracket + 1, closeBracket);
+                java.util.regex.Matcher mObj = java.util.regex.Pattern.compile("\\{([^}]+)\\}").matcher(arrayContent);
+                while (mObj.find()) {
+                    String objStr = mObj.group(1);
+                    java.util.regex.Matcher mProd = java.util.regex.Pattern.compile("\"productId\"\\s*:\\s*(\\d+)").matcher(objStr);
+                    java.util.regex.Matcher mQty = java.util.regex.Pattern.compile("\"quantitySold\"\\s*:\\s*(\\d+)").matcher(objStr);
+                    if (mProd.find() && mQty.find()) {
+                        req.items.add(new SaleItemRequest(
+                            Integer.parseInt(mProd.group(1)),
+                            Integer.parseInt(mQty.group(1))
+                        ));
+                    }
+                }
+            }
+        }
+
+        // Fallback for single sale payload: {"productId": 1, "quantitySold": 2}
+        if (req.items.isEmpty()) {
+            java.util.regex.Matcher mProd = java.util.regex.Pattern.compile("\"productId\"\\s*:\\s*(\\d+)").matcher(json);
+            java.util.regex.Matcher mQty = java.util.regex.Pattern.compile("\"quantitySold\"\\s*:\\s*(\\d+)").matcher(json);
+            if (mProd.find() && mQty.find()) {
+                req.items.add(new SaleItemRequest(
+                    Integer.parseInt(mProd.group(1)),
+                    Integer.parseInt(mQty.group(1))
+                ));
+            }
+        }
+
+        return req;
+    }
+
     private static String escape(String raw) {
         if (raw == null) return "";
         StringBuilder sb = new StringBuilder();

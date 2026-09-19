@@ -84,10 +84,13 @@ CREATE TABLE stock_transactions (
 -- ------------------------------------------------------------
 CREATE TABLE sales (
     sale_id INT AUTO_INCREMENT PRIMARY KEY,
+    bill_no VARCHAR(50) DEFAULT NULL,
     product_id INT NOT NULL,
     quantity_sold INT NOT NULL CHECK (quantity_sold > 0),
     unit_price DECIMAL(10, 2) NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
+    customer_name VARCHAR(100) DEFAULT 'Walk-in Customer',
+    payment_method VARCHAR(50) DEFAULT 'Cash',
     sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_sale_product FOREIGN KEY (product_id) 
         REFERENCES products(product_id) ON DELETE CASCADE

@@ -534,86 +534,7 @@ function populateProductSelects() {
     </option>`).join('');
 
   if (currentVal) select.value = currentVal;
-  updatePosSubtotal();
-}
-
-function updatePosSubtotal() {
-  const select = document.getElementById('posProductSelect');
-  const selectedOpt = select.options[select.selectedIndex];
-  const qtyInput = document.getElementById('posQuantity');
-
-  if (!selectedOpt || !selectedOpt.value) {
-    document.getElementById('posUnitPrice').value = '₹0.00';
-    document.getElementById('posAvailableStock').value = '0';
-    document.getElementById('posBillAmount').textContent = '₹0.00';
-    return;
-  }
-
-  const price = parseFloat(selectedOpt.getAttribute('data-price') || 0);
-  const stock = parseInt(selectedOpt.getAttribute('data-stock') || 0);
-  const qty = parseInt(qtyInput.value || 1);
-
-  document.getElementById('posUnitPrice').value = `₹${price.toFixed(2)}`;
-  document.getElementById('posAvailableStock').value = stock;
-
-  const total = price * Math.max(1, qty);
-  document.getElementById('posBillAmount').textContent = `₹${total.toFixed(2)}`;
-}
-
-async function loadSales() {
-  const tbody = document.getElementById('salesTableBody');
-  try {
-    const res = await fetch(`${API_BASE}/sales`);
-    state.sales = await res.json();
-
-    if (!state.sales || state.sales.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="text-center">No sales billed yet.</td></tr>';
-      return;
-    }
-
-    tbody.innerHTML = state.sales.map(s => `
-      <tr>
-        <td>#SALE-${s.saleId}</td>
-        <td><strong>${escapeHtml(s.productName || 'Product #' + s.productId)}</strong></td>
-        <td>${s.quantitySold} units</td>
-        <td><strong style="color: #2563eb;">₹${Number(s.totalPrice).toFixed(2)}</strong></td>
-        <td>${s.saleDate}</td>
-      </tr>
-    `).join('');
-  } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="color: #ef4444;">Failed to load sales register.</td></tr>';
-  }
-}
-
-async function handlePosSale(e) {
-  e.preventDefault();
-  const prodId = parseInt(document.getElementById('posProductSelect').value);
-  const qty = parseInt(document.getElementById('posQuantity').value);
-
-  if (!prodId) {
-    alert('Please select a product to sell.');
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API_BASE}/sales`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId: prodId, quantitySold: qty })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Sale transaction failed');
-
-    showToast(`Sale recorded successfully! Total: ₹${Number(data.totalPrice).toFixed(2)}`);
-    document.getElementById('posSaleForm').reset();
-    updatePosSubtotal();
-
-    loadSales();
-    loadProducts();
-    loadDashboard();
-  } catch (err) {
-    alert(`Error: ${err.message}`);
-  }
+  if (typeof updatePosItemDetails === 'function') updatePosItemDetails();
 }
 
 // -------------------------------------------------------------
@@ -714,6 +635,314 @@ function downloadCsvFile(filename, headers, rows) {
   link.click();
   document.body.removeChild(link);
   showToast(`Downloaded ${filename}`);
+}
+
+// -------------------------------------------------------------
+// POINT OF SALE (POS) & MULTI-COMMODITY BILLING
+// -------------------------------------------------------------
+let posCart = [];
+
+async function loadSales() {
+  const tbody = document.getElementById('salesTableBody');
+  const prodSelect = document.getElementById('posProductSelect');
+
+  try {
+    const [salesRes, prodsRes] = await Promise.all([
+      fetch(`${API_BASE}/sales`),
+      fetch(`${API_BASE}/products`)
+    ]);
+
+    state.sales = await salesRes.json();
+    state.products = await prodsRes.json();
+
+    // Populate commodity dropdown
+    if (prodSelect) {
+      const currentVal = prodSelect.value;
+      prodSelect.innerHTML = '<option value="">-- Choose Item --</option>' +
+        state.products.map(p => `
+          <option value="${p.productId}" ${p.quantity === 0 ? 'disabled' : ''}>
+            ${escapeHtml(p.productName)} (${p.sku}) — ₹${Number(p.unitPrice).toFixed(2)} [Stock: ${p.quantity}]${p.quantity === 0 ? ' (OUT OF STOCK)' : ''}
+          </option>
+        `).join('');
+      if (currentVal) prodSelect.value = currentVal;
+      updatePosItemDetails();
+    }
+
+    // Render historical sales register
+    if (tbody) {
+      if (!state.sales || state.sales.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center">No sales recorded yet.</td></tr>';
+      } else {
+        tbody.innerHTML = state.sales.map(s => `
+          <tr>
+            <td><span style="font-weight: 700; color: #4f46e5; background: #eef2ff; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${escapeHtml(s.billNo || '#' + s.saleId)}</span></td>
+            <td>#${s.saleId}</td>
+            <td><strong>${escapeHtml(s.productName)}</strong></td>
+            <td>${s.quantitySold} units</td>
+            <td>₹${Number(s.unitPrice).toFixed(2)}</td>
+            <td><strong style="color: #15803d;">₹${Number(s.totalAmount).toFixed(2)}</strong></td>
+            <td>${escapeHtml(s.customerName || 'Walk-in Customer')}</td>
+            <td><span class="badge badge-info" style="font-size: 11px;">${escapeHtml(s.paymentMethod || 'Cash')}</span></td>
+            <td style="font-size: 12px; color: #64748b;">${s.saleDate || '-'}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    renderPosCart();
+  } catch (err) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="text-center" style="color: #ef4444;">Failed to load sales register.</td></tr>';
+  }
+}
+
+function updatePosItemDetails() {
+  const prodSelect = document.getElementById('posProductSelect');
+  const priceInput = document.getElementById('posUnitPrice');
+  const stockInput = document.getElementById('posAvailableStock');
+  const qtyInput = document.getElementById('posQuantity');
+
+  const prodId = parseInt(prodSelect.value);
+  const prod = state.products.find(p => p.productId === prodId);
+
+  if (prod) {
+    const existing = posCart.find(c => c.productId === prodId);
+    const inCart = existing ? existing.quantity : 0;
+    const remaining = Math.max(0, prod.quantity - inCart);
+
+    priceInput.value = `₹${Number(prod.unitPrice).toFixed(2)}`;
+    stockInput.value = remaining;
+    qtyInput.max = remaining > 0 ? remaining : 1;
+    qtyInput.disabled = remaining === 0;
+  } else {
+    priceInput.value = '₹0.00';
+    stockInput.value = '0';
+    qtyInput.disabled = false;
+  }
+}
+
+function addCommodityToCart(e) {
+  e.preventDefault();
+  const prodSelect = document.getElementById('posProductSelect');
+  const qtyInput = document.getElementById('posQuantity');
+
+  const prodId = parseInt(prodSelect.value);
+  const qty = parseInt(qtyInput.value);
+
+  if (!prodId) {
+    alert('Please select a stationery commodity first.');
+    return;
+  }
+  if (isNaN(qty) || qty <= 0) {
+    alert('Quantity must be at least 1.');
+    return;
+  }
+
+  const prod = state.products.find(p => p.productId === prodId);
+  if (!prod) return;
+
+  const existing = posCart.find(c => c.productId === prodId);
+  const currentInCart = existing ? existing.quantity : 0;
+
+  if (currentInCart + qty > prod.quantity) {
+    alert(`Cannot add ${qty} units. Only ${prod.quantity - currentInCart} more units available on shelf.`);
+    return;
+  }
+
+  if (existing) {
+    existing.quantity += qty;
+    existing.lineTotal = Math.round(existing.quantity * prod.unitPrice * 100) / 100;
+  } else {
+    posCart.push({
+      productId: prod.productId,
+      productName: prod.productName,
+      sku: prod.sku,
+      unitPrice: prod.unitPrice,
+      quantity: qty,
+      lineTotal: Math.round(qty * prod.unitPrice * 100) / 100
+    });
+  }
+
+  qtyInput.value = 1;
+  updatePosItemDetails();
+  renderPosCart();
+  showToast(`Added ${qty}x ${prod.productName} to bill cart`);
+}
+
+function renderPosCart() {
+  const tbody = document.getElementById('posCartTableBody');
+  const itemsCountEl = document.getElementById('posCartItemsCount');
+  const unitsCountEl = document.getElementById('posCartUnitsCount');
+  const grandTotalEl = document.getElementById('posGrandTotalDisplay');
+
+  if (!tbody) return;
+
+  const totalItems = posCart.length;
+  const totalUnits = posCart.reduce((sum, item) => sum + item.quantity, 0);
+  const grandTotal = Math.round(posCart.reduce((sum, item) => sum + item.lineTotal, 0) * 100) / 100;
+
+  if (itemsCountEl) itemsCountEl.textContent = totalItems;
+  if (unitsCountEl) unitsCountEl.textContent = totalUnits;
+  if (grandTotalEl) grandTotalEl.textContent = `₹${grandTotal.toFixed(2)}`;
+
+  if (posCart.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="color: #64748b; padding: 24px;">Bill cart is empty. Add products on the left.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = posCart.map(item => `
+    <tr>
+      <td><strong>${escapeHtml(item.productName)}</strong> <span style="font-size: 11px; color: #64748b;">(${item.sku})</span></td>
+      <td>₹${Number(item.unitPrice).toFixed(2)}</td>
+      <td style="text-align: center;">
+        <button type="button" class="btn btn-sm btn-secondary" onclick="updatePosCartItemQty(${item.productId}, -1)" style="padding: 1px 6px;">-</button>
+        <span style="font-weight: 700; margin: 0 6px;">${item.quantity}</span>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="updatePosCartItemQty(${item.productId}, 1)" style="padding: 1px 6px;">+</button>
+      </td>
+      <td style="text-align: right; font-weight: 700;">₹${Number(item.lineTotal).toFixed(2)}</td>
+      <td style="text-align: center;">
+        <button type="button" onclick="removePosCartItem(${item.productId})" style="background: none; border: none; cursor: pointer; color: #ef4444; font-size: 15px;">❌</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function updatePosCartItemQty(productId, delta) {
+  const item = posCart.find(c => c.productId === productId);
+  if (!item) return;
+
+  const prod = state.products.find(p => p.productId === productId);
+  const newQty = item.quantity + delta;
+
+  if (newQty <= 0) {
+    removePosCartItem(productId);
+    return;
+  }
+  if (prod && newQty > prod.quantity) {
+    alert(`Cannot exceed available shelf stock of ${prod.quantity} units.`);
+    return;
+  }
+
+  item.quantity = newQty;
+  item.lineTotal = Math.round(newQty * item.unitPrice * 100) / 100;
+  updatePosItemDetails();
+  renderPosCart();
+}
+
+function removePosCartItem(productId) {
+  posCart = posCart.filter(c => c.productId !== productId);
+  updatePosItemDetails();
+  renderPosCart();
+}
+
+function clearPosCart() {
+  if (posCart.length > 0 && confirm('Clear all items from current bill?')) {
+    posCart = [];
+    updatePosItemDetails();
+    renderPosCart();
+  }
+}
+
+async function generatePosBill() {
+  if (posCart.length === 0) {
+    alert('Bill cart is empty. Add at least one commodity.');
+    return;
+  }
+
+  const customerName = (document.getElementById('posCustomerName').value || 'Walk-in Customer').trim();
+  const paymentMethod = document.getElementById('posPaymentMethod').value || 'Cash';
+
+  const payload = {
+    customerName,
+    paymentMethod,
+    items: posCart.map(c => ({
+      productId: c.productId,
+      quantitySold: c.quantity
+    }))
+  };
+
+  const btn = document.getElementById('btnGenerateBill');
+  btn.disabled = true;
+  btn.textContent = '⏳ Processing Sale...';
+
+  try {
+    const res = await fetch(`${API_BASE}/sales`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to complete sale');
+    }
+
+    // Render receipt modal
+    const receiptContainer = document.getElementById('receiptModalContent');
+    if (receiptContainer) {
+      receiptContainer.innerHTML = `
+        <div style="text-align: center; border-bottom: 1px dashed #94a3b8; padding-bottom: 10px; margin-bottom: 10px;">
+          <h2 style="font-size: 16px; margin: 0;">SMART STATIONERY STORE</h2>
+          <p style="margin: 2px 0; font-size: 11px; color: #475569;">Sathyabama Institute of Science and Technology</p>
+          <div style="margin-top: 6px; font-weight: bold; border: 1px solid #000; display: inline-block; padding: 2px 6px; font-size: 11px;">RETAIL TAX INVOICE</div>
+        </div>
+        <div style="border-bottom: 1px dashed #94a3b8; padding-bottom: 8px; margin-bottom: 10px; font-size: 11px;">
+          <div>Bill No: <strong>${data.billNo}</strong></div>
+          <div>Date: ${data.billDate || new Date().toLocaleString()}</div>
+          <div>Customer: <strong>${escapeHtml(data.customerName || customerName)}</strong></div>
+          <div>Payment Mode: <strong>${escapeHtml(data.paymentMethod || paymentMethod)}</strong></div>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 11px;">
+          <thead>
+            <tr style="border-bottom: 1px solid #000;">
+              <th style="text-align: left;">Item</th>
+              <th style="text-align: center;">Qty</th>
+              <th style="text-align: right;">Rate</th>
+              <th style="text-align: right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(data.items || []).map(it => `
+              <tr style="border-bottom: 1px dotted #ccc;">
+                <td style="padding: 4px 0;">${escapeHtml(it.productName)}</td>
+                <td style="text-align: center;">${it.quantitySold}</td>
+                <td style="text-align: right;">₹${Number(it.unitPrice).toFixed(2)}</td>
+                <td style="text-align: right; font-weight: bold;">₹${Number(it.totalAmount).toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div style="border-top: 1px solid #000; padding-top: 6px; font-size: 12px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Total Commodities:</span>
+            <strong>${data.totalCommodities || (data.items ? data.items.length : 1)} items</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Total Units:</span>
+            <strong>${data.totalQuantity} units</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; border-top: 1px dashed #94a3b8; padding-top: 6px; margin-top: 6px;">
+            <span>NET AMOUNT:</span>
+            <span>₹${Number(data.grandTotal).toFixed(2)}</span>
+          </div>
+        </div>
+        <div style="text-align: center; border-top: 1px dashed #94a3b8; padding-top: 10px; margin-top: 10px; font-size: 10px; color: #475569;">
+          <div>*** THANK YOU FOR SHOPPING! ***</div>
+          <div style="margin-top: 4px; font-family: monospace; letter-spacing: 2px;">||| | ||| || ||| ||</div>
+        </div>
+      `;
+    }
+
+    openModal('receiptModal');
+    posCart = [];
+    renderPosCart();
+    await loadSales();
+    showToast(`Bill ${data.billNo} generated successfully!`);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🧾 Complete Sale & Print Bill Receipt';
+  }
 }
 
 // -------------------------------------------------------------

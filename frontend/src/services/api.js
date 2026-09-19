@@ -78,9 +78,11 @@ export const api = {
     request('/stock/damaged', { method: 'POST', body: JSON.stringify({ productId, quantity, remarks }) }),
   getStockHistory: () => request('/stock/history'),
 
-  // Sales (POS)
+  // Sales (POS) & Multi-Commodity Billing
   recordSale: (productId, quantitySold) =>
     request('/sales', { method: 'POST', body: JSON.stringify({ productId, quantitySold }) }),
+  recordBill: (billData) =>
+    request('/sales', { method: 'POST', body: JSON.stringify(billData) }),
   getSalesHistory: () => request('/sales'),
 
   // Reports & Analytics
