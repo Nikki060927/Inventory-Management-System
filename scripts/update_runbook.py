@@ -598,7 +598,7 @@ def build_runbook(output_paths):
     # Row 10: Section 2 Header Bar
     ws12.merge_cells("A10:D10")
     sec2_hdr = ws12["A10"]
-    sec2_hdr.value = "🎤 3-MINUTE TECHNICAL VIVA PITCH SCRIPT FOR RECRUITERS"
+    sec2_hdr.value = "🎤 3-MINUTE TECHNICAL VIVA PITCH SCRIPT & MEMBER CONTRIBUTIONS"
     sec2_hdr.font = FONT_S12_HEADER
     sec2_hdr.fill = FILL_S12_HEADER
     sec2_hdr.alignment = Alignment(horizontal="left", vertical="center", indent=1)
@@ -606,34 +606,59 @@ def build_runbook(output_paths):
         ws12.cell(row=10, column=col_i).border = THIN_BORDER
     ws12.row_dimensions[10].height = 26
 
-    # Rows 11-13: 3-Minute Script
+    # Row 11: Table 2 Subheaders (No Role Column)
+    s12_sec2_headers = ["Time / Section", "Team Member"]
+    for col_idx, text in enumerate(s12_sec2_headers, 1):
+        c = ws12.cell(row=11, column=col_idx, value=text)
+        c.font = FONT_S12_HEADER
+        c.fill = FILL_STEEL
+        c.alignment = Alignment(horizontal="center", vertical="center")
+        c.border = THIN_BORDER
+
+    ws12.merge_cells("C11:D11")
+    c_script_hdr = ws12["C11"]
+    c_script_hdr.value = "What Has Been Done & 3-Minute Technical Viva Script"
+    c_script_hdr.font = FONT_S12_HEADER
+    c_script_hdr.fill = FILL_STEEL
+    c_script_hdr.alignment = Alignment(horizontal="center", vertical="center")
+    ws12.cell(row=11, column=3).border = THIN_BORDER
+    ws12.cell(row=11, column=4).border = THIN_BORDER
+    ws12.row_dimensions[11].height = 25
+
+    # Rows 12-14: 3-Minute Script with Team Members (No Role Column)
     pitch_scripts = [
-        ("Minute 1: The Problem & Value", "Hello! I built [Project Title] to solve [Real-World Problem]. Previously, users faced [friction/manual delays]. Our application provides an automated, responsive 3-tier solution that guarantees [Key Metric/Value]."),
-        ("Minute 2: System Architecture & Tech Stack", "Architecturally, Tier 1 is a semantic HTML5/CSS Grid frontend consuming REST APIs via asynchronous JavaScript Fetch. Tier 2 is a Java Spring Boot 3 backend handling validation rules and DTO mapping. Tier 3 is MySQL 8.0 maintaining ACID compliance."),
-        ("Minute 3: Live Demo & Engineering Robustness", "In this live demo, notice how submitting the form immediately validates the input, returns HTTP 201 Created from Spring Boot, and updates the UI in real time without page reload. We solved CORS and edge cases with systematic debugging.")
+        ("Minute 1: The Problem & Value", "Nikhila V (44731059)", "Hello! I built [Project Title] to solve [Real-World Problem]. Previously, users faced [friction/manual delays]. Our application provides an automated, responsive 3-tier solution that guarantees [Key Metric/Value]."),
+        ("Minute 2: System Architecture & Tech Stack", "Zaid Basha (44731049)", "Architecturally, Tier 1 is a semantic HTML5/CSS Grid frontend consuming REST APIs via asynchronous JavaScript Fetch. Tier 2 is a Java Spring Boot 3 backend handling validation rules and DTO mapping. Tier 3 is MySQL 8.0 maintaining ACID compliance."),
+        ("Minute 3: Live Demo & Engineering Robustness", "Team (Nikhila & Zaid)", "In this live demo, notice how submitting the form immediately validates the input, returns HTTP 201 Created from Spring Boot, and updates the UI in real time without page reload. We solved CORS and edge cases with systematic debugging.")
     ]
 
-    for idx, (label, script_text) in enumerate(pitch_scripts, 11):
+    for idx, (label, member, script_text) in enumerate(pitch_scripts, 12):
         c_lbl = ws12.cell(row=idx, column=1, value=label)
         c_lbl.font = FONT_S12_BOLD
         c_lbl.fill = FILL_S12_PITCH_LABEL
         c_lbl.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
         c_lbl.border = THIN_BORDER
 
-        ws12.merge_cells(start_row=idx, start_column=2, end_row=idx, end_column=4)
-        c_txt = ws12.cell(row=idx, column=2, value=script_text)
+        c_mbr = ws12.cell(row=idx, column=2, value=member)
+        c_mbr.font = FONT_S12_BOLD
+        c_mbr.fill = FILL_S12_WHITE
+        c_mbr.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        c_mbr.border = THIN_BORDER
+
+        ws12.merge_cells(start_row=idx, start_column=3, end_row=idx, end_column=4)
+        c_txt = ws12.cell(row=idx, column=3, value=script_text)
         c_txt.font = FONT_S12_REGULAR
         c_txt.fill = FILL_S12_WHITE
         c_txt.alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
 
-        for col_i in range(2, 5):
+        for col_i in range(3, 5):
             ws12.cell(row=idx, column=col_i).border = THIN_BORDER
         ws12.row_dimensions[idx].height = 42
 
-    ws12.column_dimensions['A'].width = 30
-    ws12.column_dimensions['B'].width = 28
-    ws12.column_dimensions['C'].width = 65
-    ws12.column_dimensions['D'].width = 22
+    ws12.column_dimensions['A'].width = 28
+    ws12.column_dimensions['B'].width = 24
+    ws12.column_dimensions['C'].width = 52
+    ws12.column_dimensions['D'].width = 26
 
     # Save to all specified output paths
     for path in output_paths:
