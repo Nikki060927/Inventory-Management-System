@@ -518,30 +518,122 @@ def build_runbook(output_paths):
     auto_fit_columns(ws11, 5)
 
     # =============================================================
-    # SHEET 12: 12. Phase 4 - Cloud & Pitch
+    # SHEET 12: 12. Phase 4 - Cloud & Pitch (MATCHING SIST SCREENSHOT)
     # =============================================================
     ws12 = wb.create_sheet(title="12. Phase 4 - Cloud & Pitch")
     ws12.views.sheetView[0].showGridLines = True
-    ws12["A1"] = "3-MINUTE VIVA PRESENTATION SCRIPT & TEAM PITCH"
-    ws12["A1"].font = FONT_TITLE_MAIN
 
-    style_header_row(ws12, 3, ["Time Interval", "Speaker Name & Reg No", "Role", "Viva Pitch Script Content & Examiner Talking Points"])
-    pitch_data = [
-        ("0:00 - 0:45", "Nikhila V (44731059)", "Lead Architect", "Good morning respected examiners. We represent Sathyabama Institute of Science and Technology (SIST), Department of CSE AI, Batch 2023-2027 Section A4. Our capstone project is the Smart Stationery Inventory Management System. Stationery retail faces unique problems: managing hundreds of small SKUs in paper registers leads to human math errors, untracked damaged goods, and severe stock-outs during back-to-school exam rushes. To solve this, we architected a robust 3-tier solution using Core Java 21, plain JDBC, MySQL 8.0, and modern React 19 with a Vanilla Web companion."),
-        ("0:45 - 1:45", "Zaid Basha (44731049)", "Backend & DB Specialist", "On the backend, we demonstrate mastery over core computer science principles without relying on bulky frameworks. Our Java backend uses standard library HttpServer with Java 21 Virtual Threads and raw JDBC PreparedStatements for 100% SQL injection immunity. In MySQL, our 5 tables in 3NF enforce non-negative stock (CHECK quantity >= 0). For POS billing, we coordinate an atomic 3-way transaction ensuring stock decrements, customer receipts, and audit ledger entries succeed together or rollback completely."),
-        ("1:45 - 2:30", "Nikhila V (44731059)", "Lead Architect & Frontend", "On the frontend, we built both a sleek React 19 application running on port 5173 with role-based authentication (admin, staff1, staff2) and a pure Vanilla HTML5/CSS3 interface. As you can see on the live dashboard, when stock drops below the safety threshold, the system displays an amber LOW STOCK badge and calculates the exact suggested reorder units: (Reorder Point * 2) - Current Qty. We also built client-side CSV export allowing 1-click vendor order spreadsheets."),
-        ("2:30 - 3:00", "Team (Nikhila & Zaid)", "Joint Conclusion", "Every single module has passed 100% of our acceptance test suites. The code is version-controlled on GitHub across main, dev, and feature branches, and the system launches in 1-click using run.bat. We are pleased to demonstrate the live application running on http://127.0.0.1:5173 and http://localhost:8080/api and welcome any questions from the panel.")
+    # Styling for Sheet 12 matching screenshot
+    FONT_S12_TITLE = Font(name="Calibri", size=13, bold=True, color="0F1E36")
+    FONT_S12_HEADER = Font(name="Calibri", size=10, bold=True, color="FFFFFF")
+    FONT_S12_BOLD = Font(name="Calibri", size=10, bold=True, color="0F172A")
+    FONT_S12_REGULAR = Font(name="Calibri", size=10, color="0F172A")
+    FONT_S12_STATUS = Font(name="Calibri", size=10, color="0F172A")
+
+    FILL_S12_HEADER = PatternFill(start_color="0F1E36", end_color="0F1E36", fill_type="solid")
+    FILL_S12_MINT = PatternFill(start_color="F0FDF4", end_color="F0FDF4", fill_type="solid")
+    FILL_S12_WHITE = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
+    FILL_S12_STATUS = PatternFill(start_color="DCFCE7", end_color="DCFCE7", fill_type="solid")
+    FILL_S12_PITCH_LABEL = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")
+
+    # Row 1: Title Banner
+    ws12["A1"] = "🚀 PHASE 4: DEPLOY — CLOUD DEPLOYMENT & 3-MINUTE PITCH SCRIPT"
+    ws12["A1"].font = FONT_S12_TITLE
+    ws12.row_dimensions[1].height = 24
+    ws12.row_dimensions[2].height = 12
+
+    # Row 3: Table 1 Headers
+    s12_headers = [
+        "Deployment Deliverable",
+        "Target Platform",
+        "Live URL / Repository Link (Fill by Student)",
+        "Verification Status"
+    ]
+    for col_idx, text in enumerate(s12_headers, 1):
+        c = ws12.cell(row=3, column=col_idx, value=text)
+        c.font = FONT_S12_HEADER
+        c.fill = FILL_S12_HEADER
+        c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        c.border = THIN_BORDER
+    ws12.row_dimensions[3].height = 26
+
+    # Rows 4-7: Table 1 Deliverables Data
+    deploy_data = [
+        ("Public GitHub Repository", "GitHub", "https://github.com/[your-username]/[your-repo-name]", "Verified Active"),
+        ("Live Frontend Web Application", "GitHub Pages / Vercel / Netlify", "https://[your-username].github.io/[your-repo-name]", "Live in Browser"),
+        ("Live Backend REST API", "Render.com / Railway / Cloud VM", "https://[your-app-api].onrender.com/api/v1/items", "Responding 200 OK"),
+        ("Recruiter README.md File", "GitHub Markdown", "Contains System Architecture, Badges, API Spec Table & Demo GIF", "Complete")
     ]
 
-    for r_idx, row in enumerate(pitch_data, 4):
-        for c_idx, val in enumerate(row, 1):
-            cell = ws12.cell(row=r_idx, column=c_idx, value=val)
-            cell.font = FONT_REGULAR
-            cell.border = THIN_BORDER
-            cell.alignment = Alignment(vertical="center", wrap_text=True)
-            if r_idx % 2 == 0:
-                cell.fill = FILL_LIGHT_ROW
-    auto_fit_columns(ws12, 4)
+    for idx, (deliv, platform, link, status) in enumerate(deploy_data, 4):
+        c1 = ws12.cell(row=idx, column=1, value=deliv)
+        c2 = ws12.cell(row=idx, column=2, value=platform)
+        c3 = ws12.cell(row=idx, column=3, value=link)
+        c4 = ws12.cell(row=idx, column=4, value=status)
+
+        # Alternating soft mint fill matching screenshot
+        row_fill = FILL_S12_MINT if idx in (4, 6) else FILL_S12_WHITE
+        c1.fill = row_fill
+        c2.fill = row_fill
+        c3.fill = row_fill
+        c4.fill = FILL_S12_STATUS  # Light green status cell matching screenshot
+
+        c1.font = FONT_S12_REGULAR
+        c2.font = FONT_S12_REGULAR
+        c3.font = FONT_S12_REGULAR
+        c4.font = FONT_S12_STATUS
+
+        c1.alignment = Alignment(horizontal="center", vertical="center")
+        c2.alignment = Alignment(horizontal="center", vertical="center")
+        c3.alignment = Alignment(horizontal="center", vertical="center")
+        c4.alignment = Alignment(horizontal="center", vertical="center")
+
+        for c in (c1, c2, c3, c4):
+            c.border = THIN_BORDER
+        ws12.row_dimensions[idx].height = 24
+
+    ws12.row_dimensions[8].height = 12
+    ws12.row_dimensions[9].height = 12
+
+    # Row 10: Section 2 Header Bar
+    ws12.merge_cells("A10:D10")
+    sec2_hdr = ws12["A10"]
+    sec2_hdr.value = "🎤 3-MINUTE TECHNICAL VIVA PITCH SCRIPT FOR RECRUITERS"
+    sec2_hdr.font = FONT_S12_HEADER
+    sec2_hdr.fill = FILL_S12_HEADER
+    sec2_hdr.alignment = Alignment(horizontal="left", vertical="center", indent=1)
+    for col_i in range(1, 5):
+        ws12.cell(row=10, column=col_i).border = THIN_BORDER
+    ws12.row_dimensions[10].height = 26
+
+    # Rows 11-13: 3-Minute Script
+    pitch_scripts = [
+        ("Minute 1: The Problem & Value", "Hello! I built [Project Title] to solve [Real-World Problem]. Previously, users faced [friction/manual delays]. Our application provides an automated, responsive 3-tier solution that guarantees [Key Metric/Value]."),
+        ("Minute 2: System Architecture & Tech Stack", "Architecturally, Tier 1 is a semantic HTML5/CSS Grid frontend consuming REST APIs via asynchronous JavaScript Fetch. Tier 2 is a Java Spring Boot 3 backend handling validation rules and DTO mapping. Tier 3 is MySQL 8.0 maintaining ACID compliance."),
+        ("Minute 3: Live Demo & Engineering Robustness", "In this live demo, notice how submitting the form immediately validates the input, returns HTTP 201 Created from Spring Boot, and updates the UI in real time without page reload. We solved CORS and edge cases with systematic debugging.")
+    ]
+
+    for idx, (label, script_text) in enumerate(pitch_scripts, 11):
+        c_lbl = ws12.cell(row=idx, column=1, value=label)
+        c_lbl.font = FONT_S12_BOLD
+        c_lbl.fill = FILL_S12_PITCH_LABEL
+        c_lbl.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        c_lbl.border = THIN_BORDER
+
+        ws12.merge_cells(start_row=idx, start_column=2, end_row=idx, end_column=4)
+        c_txt = ws12.cell(row=idx, column=2, value=script_text)
+        c_txt.font = FONT_S12_REGULAR
+        c_txt.fill = FILL_S12_WHITE
+        c_txt.alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+
+        for col_i in range(2, 5):
+            ws12.cell(row=idx, column=col_i).border = THIN_BORDER
+        ws12.row_dimensions[idx].height = 42
+
+    ws12.column_dimensions['A'].width = 30
+    ws12.column_dimensions['B'].width = 28
+    ws12.column_dimensions['C'].width = 65
+    ws12.column_dimensions['D'].width = 22
 
     # Save to all specified output paths
     for path in output_paths:
