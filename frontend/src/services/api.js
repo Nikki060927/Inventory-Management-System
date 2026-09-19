@@ -3,7 +3,8 @@
  * Communicates with Core Java 21 REST backend at http://localhost:8080/api
  */
 
-const BASE_URL = 'http://localhost:8080/api';
+// Supports direct relative path (via Vite proxy or unified server) and explicit remote API URLs
+const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 async function request(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
